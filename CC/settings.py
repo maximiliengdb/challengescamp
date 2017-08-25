@@ -26,7 +26,10 @@ SECRET_KEY = '@j#06d5k()3yu=z^c5wb%r4$f9afv8d&rrx-d6pwkq53edliau'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'http://challengescamp.pythonanywhere.com/',
+    'pythonanywhere.com',
+                 ]
 
 
 # Application definition
