@@ -18,7 +18,6 @@ from django.template import Context
 from django.template.loader import render_to_string, get_template
 from django.core.mail import EmailMessage
 from email.mime.image import MIMEImage
-from _overlapped import NULL
 from operator import itemgetter, attrgetter, methodcaller
 from whitenoise.static_file import StaticFile
 from django.http import JsonResponse
