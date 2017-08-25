@@ -1,0 +1,83 @@
+{% extends "CM/base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% include "CM/naviguation.html" %}
+
+    <div class="content">
+    <div class="container-fluid">
+
+        {% if message != 'False' %}
+            <div class="alert {{type_message}}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <span>{{message}}</span>
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h2 class="title">{{quete.objectif}}</h2>
+                        <p class="category">Catégorie : {{quete.theme.nom}}</p>
+                        <hr style="margin-bottom: 0;">
+                    </div>
+                    <div class="content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="text-align : center">"{{quete.description}}" pour <strong> {{quete.recompense.points}} </strong> points {% if libelle.recompense.goodies %} et pour <strong> {{ libelle.recompense.goodies_description}} </strong> {% endif %}</h3>
+                                    
+                                    <form action="/quete/accepter_quete/" method="POST">
+                                        <div class="checkbox" style="margin : auto; width: 250px;">
+                                            <input type="checkbox" id="prive" name="prive">Est-ce une quête privée?</input>
+                                        </div>
+                                    <h4 style="text-align : center"> Pour cela il faudra que vos amis vous challenge sur ces défis : </h4>
+                                    <div class="row">
+                                        <hr>
+                                        {% for defi in quete.defis.all %}
+                                            <div class="col-md-4">
+                                                <div class="card">
+                                                    <div class="header">
+                                                        <h4 class="title"><a href="/arene/defi_page/?id_defi={{defi.id}}">{{defi.nom}}</a></h4>
+                                                    </div>
+                                                    <div class="content">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                        {% csrf_token %}
+                                        <input id="id_quete" name="id_quete" value="{{quete.id}}" hidden>
+
+                                        <hr>
+                                        
+                                        <button type="submit" class="btn btn-primary btn-block defier">Choisir cette quête!</button>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% block javascript %}
+    <script>
+        $('.nbre_notification').click(function () {
+              $.ajax({
+                url: '/compte/vue_notification/',
+              });
+              $("#notifications").load("/compte/vestiaire/ #notifications");
+          });
+          
+          $('div.block_notification').click(function () {
+              var id = $(this).attr('value');
+              $.ajax({
+                url: '/compte/active_notification/?notif_id='+id
+              });
+              alert(url);
+          });
+    </script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "CM/base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% include "CM/naviguation.html" %}
+
+    <div class="content">
+    <div class="container-fluid">
+
+        {% if message != 'False' %}
+            <div class="alert {{type_message}}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <span>{{message}}</span>
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <h2 class="title">Ma Quête : {{ma_quete.libelle.objectif}}</h2>
+                                <p class="category">Catégorie : {{ma_quete.libelle.theme.nom}}</p>
+                                
+                            </div>
+                            {% if ma_quete.etat = "D" %}
+                            <div class="col-md-3">
+                                <a type="button" href="/quete/abandonner_quete/" class="btn btn-danger btn-block">Abandonner cette Quête</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <hr style="margin-bottom: 0;">
+                    </div>
+                    <div class="content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="text-align : center">"{{ma_quete.libelle.description}}" pour <strong> {{ma_quete.libelle.recompense.points}} </strong> points {% if ma_quete.libelle.recompense.goodies %} et pour <strong> {{ ma_quete.libelle.recompense.goodies_description}} </strong> {% endif %}</h3>
+                                    
+                                    <h4 style="text-align : center"> Pour cela il faudra que vos amis vous challenge sur ces défis : </h4>
+                                    <div class="row">
+                                        <hr>
+                                        {% for defi in ma_quete.libelle.defis.all %}
+                                            <div class="col-md-4">
+                                                <div class="card">
+                                                    <div class="header">
+                                                        {% if defi.id in mes_success %}
+
+                                                        <h4 style="color : #2ecc71" class="title"><i class="ti-check"></i><a style="color : #2ecc71" href="/arene/defi_page/?id_defi={{defi.id}}"> {{defi.nom}}</a></h4>
+
+                                                        {% else %}
+
+                                                        <h4 class="title"><a href="/arene/defi_page/?id_defi={{defi.id}}"><i class="ti-timer"> </i> {{defi.nom}}</a></h4>
+
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="content">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% block javascript %}
+    <script>
+        $('.nbre_notification').click(function () {
+              $.ajax({
+                url: '/compte/vue_notification/',
+              });
+              $("#notifications").load("/compte/vestiaire/ #notifications");
+          });
+          
+          $('div.block_notification').click(function () {
+              var id = $(this).attr('value');
+              $.ajax({
+                url: '/compte/active_notification/?notif_id='+id
+              });
+              alert(url);
+          });
+    </script>
+{% endblock %}
+{% endblock %}

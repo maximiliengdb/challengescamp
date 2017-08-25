@@ -1,0 +1,242 @@
+{% extends "CM/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+<style>
+
+    {% for theme in categories %}
+
+        .{{theme.nom}}:hover { 
+            background-color: {{theme.couleur}};
+        }
+
+        .{{theme.nom}}.active{ 
+            background-color: {{theme.couleur}};
+            color : white;
+        }
+
+    {% endfor %}
+
+    {% for theme in categories %}
+
+        .{{theme.nom|upper}}:hover { 
+            background-color: {{theme.couleur}};
+        } 
+       .{{theme.nom|upper}}.active { 
+            background-color: {{theme.couleur}};
+            color : white;
+        }
+
+    {% endfor %}
+</style>
+
+{% include "CM/naviguation.html" %}
+
+    <div class="content">
+    <div class="container-fluid">
+
+        {% if message != 'False' %}
+            <div class="alert {{type_message}}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <span>{{message}}</span>
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="header">
+                                <h1 class="title">Catégories</h1>
+                                <p class="category">Cliquez sur une catégorie pour faire disparaitre ou apparaitre les sous-cataégories et défis de cette catégorie</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="header">
+                            <a type"button" href="/compte/proposition_defi" class="btn btn-primary btn-block" >Proposer un défi</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {% for categorie in categories %}                                  
+                                        <button type="button" class="{{categorie.nom|upper}} btn btn-lg categorie" style="border-color : {{categorie.couleur}}; border-width: 1.2px;">{{categorie}}</button>
+                                    {% endfor %}
+                                <hr>
+                                </div>
+                                <div class="col-md-12">
+                                <h4 class="title">Sous-Catégories</h4></br>
+                                {% for categorie in sous_categories %}
+                                    <button type="button" class="btn btn-md sous_categorie {{categorie.theme}}" style="border-color : {{categorie.theme.couleur}}; border-width: 1.2px;">{{categorie}}</button>
+                                {% endfor %}
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="header">
+                            <h3 class="title">Les Défis</h3>
+                            <p class="category">Cliquez sur un défi pour defier vos challengeurs</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="header">
+                            <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                <div class="input-group-addon"><img style=" max-width : 45%" src="{% static 'image/icone/loupe.png' %}"></div>
+                                <input type="text" class="form-control search" placeholder="Rechercher un défi">
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="demo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+            
+
+                                
+        
+    </div>
+{% block javascript %}
+<script>
+
+    $(function() {
+
+        var list = [ {% for libelle in libelles %} { nom : "{{libelle.nom}}",  id : "{{libelle.id}}", theme : "{{libelle.theme.nom}}", soustheme : "{{libelle.sous_theme.nom}}", couleur : "{{libelle.theme.couleur}}", niveau : "{{libelle.recompense.points}}"}, {% endfor %} ];
+        
+        var options = {
+            shouldSort: true,
+            threshold: 0.1,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+                "nom",
+                "theme",
+                "soustheme",
+                "couleur",
+                "niveau",
+            ]
+            };
+            
+            var fuse = new Fuse(list, options); // "list" is the item array
+            var result = fuse.search(" ");
+            var x;
+
+            console.log (result);
+            var html = "";
+
+            for (x in result) {
+                var decoration = result[x].niveau
+                html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> Pts : '+ result[x].niveau +'</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
+                            
+            }
+
+            $("div.demo").html(html);
+
+        $("button.categorie").click(function(){
+            var categorie = $(this).text();
+            $(this).button('toggle');
+            
+            if ($("button." + categorie).is(":visible")){
+            $("button." + categorie).hide();
+            $("button." + categorie).removeClass('active');
+            
+            } else {
+            $("button." + categorie).show();
+            };
+                
+        });
+        
+        
+        $("button.sous_categorie").click(function(){
+            var sous_categorie = $(this).text();
+            $(this).button('toggle');
+            
+            if ($("button." + sous_categorie).is(":visible")){
+            $("button." + sous_categorie).hide();
+            
+            } else {
+            $("button." + sous_categorie).show();
+            };
+                
+        });
+
+        $('input.search').keyup(function(){
+            
+            var search = $(this).val();
+            
+            var options = {
+            shouldSort: true,
+            threshold: 0.4,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+                "nom",
+                "theme",
+                "soustheme",
+                "couleur",
+                "niveau",
+            ]
+            };
+            
+            var fuse = new Fuse(list, options); // "list" is the item array
+            var result = fuse.search(search);
+
+            if (search == ""){result = list};
+
+            var x;
+            var html = "";
+
+            for (x in result) {
+                
+                 html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> Pts : '+ result[x].niveau +'</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';          
+            }
+
+            $("div.demo").html(html);
+            });
+            
+    });
+
+    $('.nbre_notification').click(function () {
+        $.ajax({
+        url: '/compte/vue_notification/',
+        });
+        $("#notifications").load("/compte/vestiaire/ #notifications");
+        $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+    });
+    
+    $('div.block_notification').click(function () {
+        var id = $(this).attr('value');
+        $.ajax({
+        url: '/compte/active_notification/?notif_id='+id
+        });
+        alert(url);
+    });
+
+    </script>	
+{% endblock %}
+{% endblock %}
