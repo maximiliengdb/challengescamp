@@ -1,0 +1,175 @@
+{% extends "CC/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+{% include "CC/naviguation.html" %}
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+
+                    {% if message != 'False' %}
+                        <div class="alert {{type_message}}">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                            <span>{{message}}</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Mes Défis Reçus</h4>
+                                <p class="category">Voici tout les défis que vous avez reçus</p>
+                                <hr>
+                            </div>
+                            <div class="content">
+                                <div class="row">
+                                    {% for defi in defis_recus %}
+                                        <div class="recus" style="display:none;">
+                                        <div class="col-md-12">                                               
+                                            <h6 class="card-subtitle mb-2 text-muted"><a href='/arene/defi/?id_defi={{defi.id}}'> {{defi.libelle.nom|title}} </a> <small> ({{defi.libelle.theme.nom|title}}) </small> 
+                                            <span class="badge">
+                                                {% if defi.etat = "E" %}
+                                                NEW
+                                                {% endif %}
+                                                {% if defi.etat = "A" %}
+                                                EN COURS
+                                                {% endif %}
+                                                {% if defi.etat = "EX" %}
+                                                EXPIRE
+                                                {% endif %}
+                                                {% if defi.etat = "R" %}
+                                                REFUSE
+                                                {% endif %}
+                                                {% if defi.etat = "V" %}
+                                                VALIDE
+                                                {% endif %}
+                                                {% if defi.etat = "AV" %}
+                                                ATT DE VALIDATION
+                                                {% endif %}
+                                                {% if defi.etat = "C" %}
+                                                CONTESTE
+                                                {% endif %}
+                                                {% if defi.etat = "S" %}
+                                                SIGNALE
+                                                {% endif %}
+                                            </span> 
+                                            </br> defieur : {{defi.defieur.username|title}}</h6> <h7>{{defi.libelle.description|truncatechars:200}}</h7>                                                              
+                                        <hr>
+                                        </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="footer">
+                                    <a class="btn btn-default btn-block" href="#" id="loadRecus">Voir 10 défis de plus</a>
+                                    <hr>
+                                    <div class="stats">
+                                        <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Mes Défis Lancés</h4>
+                                <p class="category">Voici tout les défis que vous avez lancés</p>
+                                <hr>
+                            </div>
+                            <div class="content">
+                                <div class="row">
+                                {% for defi in defis_lances %}
+                                    <div class="lances" style="display:none;">
+                                    <div class="col-md-12">                                               
+                                        <h6 class="card-subtitle mb-2 text-muted"><a href='/arene/defi/?id_defi={{defi.id}}'> {{defi.libelle.nom|title}} </a> <small> ({{defi.libelle.theme.nom|title}}) </small> 
+                                        <span class="badge">
+                                            {% if defi.etat = "E" %}
+                                            ENVOYE
+                                            {% endif %}
+                                            {% if defi.etat = "A" %}
+                                            EN COURS
+                                            {% endif %}
+                                            {% if defi.etat = "EX" %}
+                                            EXPIRE
+                                            {% endif %}
+                                            {% if defi.etat = "R" %}
+                                            REFUSE
+                                            {% endif %}
+                                            {% if defi.etat = "V" %}
+                                            VALIDE
+                                            {% endif %}
+                                            {% if defi.etat = "AV" %}
+                                            ATT DE VALIDATION
+                                            {% endif %}
+                                            {% if defi.etat = "C" %}
+                                            CONTESTE
+                                            {% endif %}
+                                            {% if defi.etat = "S" %}
+                                            SIGNALE
+                                            {% endif %}
+                                        </span>
+                                        </br> challengeur : {{defi.challengeur.username|title}}</h6>
+                                        <h7>{{defi.libelle.description|truncatechars:200}}</h7>                                                              
+                                    <hr>
+                                    </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                                <div class="footer">
+                                    <a class="btn btn-default btn-block" href="#" id="loadLances">Voir 10 défis de plus</a>
+                                    <hr>
+                                    <div class="stats">
+                                        <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+{% block javascript %}
+<script>
+    $(function(){
+        $("div.lances").slice(0, 10).show(); // select the first ten
+        $("#loadLances").click(function(e){ // click event for load more
+            e.preventDefault();
+            $(".lances:hidden").slice(0, 10).show(); // select next 10 hidden divs and show them
+            if($(".lances:hidden").length == 0){ // check if any hidden divs still exist
+                alert("Vous n'avez pas plus de défis! Lancez-vous!"); // alert if there are none left
+            }
+        });
+    });
+    $(function(){
+        $("div.recus").slice(0, 10).show(); // select the first ten
+        $("#loadRecus").click(function(e){ // click event for load more
+            e.preventDefault();
+            $(".recus:hidden").slice(0, 10).show(); // select next 10 hidden divs and show them
+            if($(".recus:hidden").length == 0){ // check if any hidden divs still exist
+                alert("Vous n'avez pas plus de défis! Lancez-vous!");
+            }
+        });
+    });
+    
+    $('.nbre_notification').click(function () {
+            $.ajax({
+            url: '/compte/vue_notification/',
+            });
+            $("#notifications").load("/compte/vestiaire/ #notifications");
+            $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+        });
+        
+        $('div.block_notification').click(function () {
+            var id = $(this).attr('value');
+            $.ajax({
+            url: '/compte/active_notification/?notif_id='+id
+            });
+            alert(url);
+        });
+</script>
+{% endblock %}
+
+{% endblock %}

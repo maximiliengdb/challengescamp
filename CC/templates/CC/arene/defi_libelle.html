@@ -1,0 +1,165 @@
+{% extends "CM/base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% include "CM/naviguation.html" %}
+
+    <div class="content">
+    <div class="container-fluid">
+
+        {% if message != 'False' %}
+            <div class="alert {{type_message}}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <span>{{message}}</span>
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h2 class="title">{{libelle.nom}}{{id_user}}</h2>
+                        <p class="category">Catégorie : {{libelle.theme.nom}}</p>
+                        <hr style="margin-bottom: 0;">
+                    </div>
+                    <div class="content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="text-align : center">"{{libelle.description}}" pour <strong> {{libelle.recompense.points}} </strong> points {% if libelle.recompense.goodies %} et pour <strong> {{ libelle.recompense.goodies_description}} </strong> {% endif %}</h3>
+                                    <form action="/arene/defi_lance" method="POST">
+
+                                    
+                                    <div class="checkbox" style="margin : auto; width: 450px;">
+                                            <input type="checkbox" id="prive" name="prive">Défi Privé? (Seul vous et le challengeur pourrons voir les preuves)
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                        </div>
+                                        <div class="col-md-8" style="margin-top : 20px;">
+                                            <a class="btn btn-warning btn-block" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                                Envie de pimenter le défi?
+                                            </a>
+                                            <div class="collapse" id="collapseExample">
+                                                <input style="margin-top : 10px;" type="text" id="enjeu" name="enjeu" class="form-control" placeholder="Que souhaitez vous mettre en jeu en plus de votre reconanissance eternelle!? "> </br>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                        </div>
+                                        
+                                    </div>
+                                    <hr>
+
+                                    <h4> Quel challengeur voulez-vous defier? </h4>  
+                                    <input type="text" class="form-control search" placeholder="Prénom, Nom, Username" value="{{cible.username}}"> </br>
+                                    {% csrf_token %}
+                                    <input id="defi" name="defi" value="{{libelle.id}}" hidden>
+                                    <div class="row">
+                                    <div class="demo"> </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary defier">Defier</button>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% block javascript %}
+<script>
+    $(function() {
+
+        var list = [ {% for ami in utilisateur.amis.all %} { id : "{{ami.id}}" , username : "{{ami.username}}", nom : "{{ami.last_name|title}}", prenom : "{{ami.first_name|title}}", photo : "{{ami.pp.image.url}}",}, {% endfor %} ];
+        
+        var test = $('input.search').val()
+
+        if (test){
+
+            var search = test;
+            
+            var options = {
+            shouldSort: true,
+            threshold: 0.1,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+                "username",
+                "nom",
+                "prenom",
+            ]
+            };
+            
+            var fuse = new Fuse(list, options); // "list" is the item array
+            var result = fuse.search(search);
+            var x;
+
+            console.log (search);
+            var html = "";
+
+            for (x in result) {
+
+                html += '<div class="col-md-3"><div class="radio"></p> <input type="radio" CHECKED name="ami" id="ami" value="'+result[x].id+'"><img class="img-responsives img-circle" style="max-height : 25px; margin-right : 5px;" src="'+result[x].photo+'" alt="'+result[x].username+'"/>'+result[x].nom+' '+result[x].prenom+'</div></div>';
+                            
+            }
+
+            $("div.demo").html(html);
+
+        };
+
+        $('input.search').keyup(function(){
+            
+            var search = $(this).val();
+            
+            var options = {
+            shouldSort: true,
+            threshold: 0.1,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+                "username",
+                "nom",
+                "prenom",
+            ]
+            };
+            
+            var fuse = new Fuse(list, options); // "list" is the item array
+            var result = fuse.search(search);
+            var x;
+
+            console.log (search);
+            var html = "";
+
+            for (x in result) {
+
+                html += '<div class="col-md-3"><div class="radio"></p> <input type="radio"  name="ami" id="ami" value="'+result[x].id+'"><img class="img-responsives img-circle" style="max-height : 25px; margin-right : 5px;" src="'+result[x].photo+'" alt="..."/>'+result[x].nom+' '+result[x].prenom+'</div></div>';
+                            
+            }
+
+            $("div.demo").html(html);
+            });
+            
+    });
+        
+    $('.nbre_notification').click(function () {
+                $.ajax({
+                    url: '/compte/vue_notification/',
+                });
+                $("#notifications").load("/compte/vestiaire/ #notifications");
+            });
+            
+            $('div.block_notification').click(function () {
+                var id = $(this).attr('value');
+                $.ajax({
+                    url: '/compte/active_notification/?notif_id='+id
+                });
+                alert(url);
+            });
+    </script>	
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "CC/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+{% include "CC/naviguation.html" %}
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    
+                    {% if message != 'False' %}
+                        <div class="alert {{type_message}}">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                            <span>{{message}}</span>
+                        </div>
+                    {% endif %}
+
+                    {% if rien = True %}
+                    <h1 style="text-align : center"> Vous n'avez pas de demande en attente</h1>
+                    {% endif %}
+
+                    {% for demande in demandes_recues %}
+                    <h2 >Les demandes en-cours</h2>
+                    <div class="col-md-3">
+                        <div class="card card-user">
+                            <div class="image">
+                                <img src="{{demande.auteur.pp.url}}" alt="Photo de profil de {{demande.auteur.username}}"/>
+                            </div>
+                            <div class="content">
+                                <div class="author">
+                                  <img class="avatar border-white"  src="{{demande.auteur.pp.url}}" alt="Photo de profil de {{demande.auteur.username}}"/>
+                                  <a href="/compte/profil_public/?profil={{demande.auteur.id}}"><h4 class="title">{{demande.auteur.first_name|title }} {{demande.auteur.last_name|title }}<br />
+                                     <small>@{{demande.auteur.username}}</small></a>
+                                  </h4>
+                                </div>
+                                <p style="text-align : center">
+                                 <a href="/compte/ajout_ami/?id_ami={{demande.auteur.id}}" class="btn btn-primary" style="margin : 1%;">Accepter</a>
+                                 <a href="/compte/refu_ami/?id_ami={{demande.auteur.id}}" class="btn btn-primary" style="margin : 1%;">Refuser</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% block javascript %}
+    <script>
+        $('.nbre_notification').click(function () {
+                $.ajax({
+                url: '/compte/vue_notification/',
+                });
+                $("#notifications").load("/compte/vestiaire/ #notifications");
+                $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+            });
+            
+            $('div.block_notification').click(function () {
+                var id = $(this).attr('value');
+                $.ajax({
+                url: '/compte/active_notification/?notif_id='+id
+                });
+                alert(url);
+            });
+    </script>
+    {% endblock %}
+{% endblock %}
