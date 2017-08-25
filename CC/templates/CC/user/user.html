@@ -78,7 +78,7 @@
                     <div class="col-lg-4 col-md-5">
                         <div class="card card-user">
                             <div class="image">
-                                {% if type = "moi" %}
+                                {% if type == "moi" %}
                                 <a href="/compte/parametre/changement_pa">
                                 <div class="container2">
                                   <img src="{{user_profil.pa.image.url}}" alt="..."/>
@@ -97,7 +97,7 @@
                             <div class="content">
                                 <div class="author">
                                 
-                                {% if type = "moi" %}
+                                {% if type == "moi" %}
                                 <a href="/compte/parametre/changement_pp">
                                 <div class="container">
                                   <img class="avatar border-white" src="{{user_profil.pp.image.url}}" alt="{{user_profil.username}}">
@@ -118,21 +118,21 @@
                                 <p class="description text-center">
                                     {{user_profil.description}}
                                     
-                                    {% if type = "attente" %}
+                                    {% if type == "attente" %}
                                     <a class="btn btn-primary" href='/compte/ajout_ami/?id_ami={{user_profil.id}}'> Accepter {{user_profil.username|title}} dans mes challengeurs </a>
                                     </a>
                                     {% endif %}
                                     
-                                    {% if type = "ami" %}
+                                    {% if type == "ami" %}
                                     <a href="/arene/accueil" class="btn btn-block btn-primary btn-lg" > Défier
                                     </a>
                                     {% endif %}
                                     
-                                    {% if type = "demande_ami" %}
+                                    {% if type == "demande_ami" %}
                                     <a class="btn btn-block btn-primary btn-lg" > Demande en cours
                                     </a>
                                     {% endif %}
-                                    {% if type = "pas_ami" %}
+                                    {% if type == "pas_ami" %}
                                     <a class="btn btn-block btn-primary btn-lg" href="/compte/demande_ami/?id_ami={{user_profil.id}}"> Ajouter aux amis
                                     </a>
                                     {% endif %}
@@ -155,7 +155,7 @@
                         </div>
                         <div class="card">
                             <div class="header" style="background-color : white;">
-                                {% if type = "moi" %}
+                                {% if type == "moi" %}
                                 <h4 class="title">Mes statistiques</h4>
                                 <p class="category">Je suis actuellement {{rang_absolu}}ème toutes catégories confondues avec {{user_profil.score_absolu}}pts </p>
                             
@@ -224,7 +224,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% if type = "moi" %}
+                        {% if type == "moi" %}
 
                         <div class="card">
                             <div class="header" style="background-color : white;">
@@ -244,7 +244,7 @@
 
                     <div class="col-lg-8 col-md-7">
 
-                        {% if type = "moi" %}
+                        {% if type == "moi" %}
 
                         <div class="row" style="text-align: center;">
                             <div class="col-md-4">
