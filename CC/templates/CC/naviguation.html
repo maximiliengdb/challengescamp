@@ -40,10 +40,10 @@
 
                                 {% for notification in notifications %}
                                 <li><a href="{{notification.lien}}">
-                                        {% if notification.type = "D" %}
+                                        {% if notification.type == "D" %}
                                             <span class="ti-bolt"> </span>
                                         {% endif %}
-                                        {% if notification.type = "DA" %}
+                                        {% if notification.type == "DA" %}
                                             <span class="ti-user"> </span>
                                         {% endif %}
                                         {{notification.message}}
@@ -91,10 +91,10 @@
     
                             {% for notification in notifications %}
                             <li><a href="{{notification.lien}}">
-                                    {% if notification.type = "D" %}
+                                    {% if notification.type == "D" %}
                                         <span class="ti-bolt"> </span>
                                     {% endif %}
-                                    {% if notification.type = "DA" %}
+                                    {% if notification.type == "DA" %}
                                         <span class="ti-user"> </span>
                                     {% endif %}
                                     {{notification.message}}
