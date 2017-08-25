@@ -19,7 +19,6 @@ from django.template.loader import render_to_string, get_template
 from django.core.mail import EmailMessage
 from email.mime.image import MIMEImage
 from operator import itemgetter, attrgetter, methodcaller
-from whitenoise.static_file import StaticFile
 from django.http import JsonResponse
 from io import StringIO, BytesIO
 from PIL import Image
