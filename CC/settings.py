@@ -27,7 +27,7 @@ SECRET_KEY = '@j#06d5k()3yu=z^c5wb%r4$f9afv8d&rrx-d6pwkq53edliau'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'challengescamp.pythonanywhere.com/',
+    'challengescamp.pythonanywhere.com',
     'pythonanywhere.com',
                  ]
 
