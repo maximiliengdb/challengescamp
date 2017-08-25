@@ -55,7 +55,7 @@
             </div>
 
             <ul class="nav">
-                <li {% if nom_page = "Le Vestiaire" %} class="active" {% endif %}>
+                <li {% if nom_page == "Le Vestiaire" %} class="active" {% endif %}>
                     <a href="/compte/vestiaire/">
                         <p> <img class="img-responsives img-circle" style="max-height : 28px; margin-right : 10px; margin-left : 2px;" src="{{utilisateur.pp.image.url}}" alt="..."/>
                         Le Vestiaire</p>
