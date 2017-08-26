@@ -13,9 +13,6 @@ class Photo(models.Model):
     thumbnail = models.ImageField(upload_to='image/thumbs/')
     image = models.ImageField(upload_to='image')
     
-pp = Photo.objects.get(nom = "ppdefault")
-pa = Photo.objects.get(nom = "padefault")
-
 class Nationalite(models.Model):
     pays = models.CharField(max_length=255)
     drapeau = models.ImageField(upload_to='image/utilisateurs/drapeau')

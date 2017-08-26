@@ -42,7 +42,6 @@
     maximumAge: 0
     };
 
-   
 
     function success(pos) {
     var crd = pos.coords;
@@ -51,9 +50,6 @@
     console.log(`Latitude : ${crd.latitude}`);
     console.log(`Longitude: ${crd.longitude}`);
     console.log(`More or less ${crd.accuracy} meters.`);
-    
-    
-      
     
     var map = new mapboxgl.Map({
     container: 'map',
