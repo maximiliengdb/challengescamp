@@ -94,7 +94,7 @@
                                         <div class="row">
                                             <div class="col-md-12"> 
                                                 {% if defi.defieur.id == utilisateur.id %}
-                                                    {% if defi.etat = "E" %}
+                                                    {% if defi.etat == "E" %}
                                                         <div class="col-md-12">
                                                             <div class="row" style="text-align : center;">
                                                                 <h3 id="afficherheure"></h3>
@@ -103,7 +103,7 @@
                                                         </div>
                                                         {% endif %}
 
-                                                    {% if defi.etat = "A" %}
+                                                    {% if defi.etat == "A" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <h3 id="afficherheure"></h3>
@@ -112,7 +112,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "AV" %}
+                                                    {% if defi.etat == "AV" %}
                                                     <div class="col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-12" style="text-align : center;">
@@ -161,7 +161,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "EX" %}
+                                                    {% if defi.etat == "EX" %}
                                                     <div class="col-md-12">
                                                         <div class="row">
                                                             <h3> Le défi à expiré </h3>
@@ -177,7 +177,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "V" %}
+                                                    {% if defi.etat == "V" %}
                                                     <div class="col-md-12" style="text-align: center;">
                                                         <h3 > Vous avez validé le défi. </h3>
                                                     <hr>
@@ -200,7 +200,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "C" %}
+                                                    {% if defi.etat == "C" %}
                                                     <div class="col-md-12" style="text-align: center;">
                                                         <h3> Vous avez contesté le défi. </h3>
                                                         <hr>
@@ -227,7 +227,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "S" %}
+                                                    {% if defi.etat == "S" %}
                                                     <div class="col-md-12" style="text-align: center;">
                                                         <h3> La contestation a été signalée comme abusive. </h3>
                                                     </div>
@@ -235,7 +235,7 @@
 
                                                 {% else %}
 
-                                                    {% if defi.etat = "E" %}
+                                                    {% if defi.etat == "E" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <div class="col-md-7">
@@ -250,7 +250,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "V" %}
+                                                    {% if defi.etat == "V" %}
                                                     <div class="col-md-12">
                                                         <div cclass="row" style="text-align : center;">
                                                             <div class="col-md-12" style="text-align : center">
@@ -280,7 +280,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "C" %}
+                                                    {% if defi.etat == "C" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <div class="col-md-7">
@@ -338,7 +338,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "A" %}
+                                                    {% if defi.etat == "A" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <div class="col-md-7">
@@ -381,7 +381,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "AV" %}
+                                                    {% if defi.etat == "AV" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <div class="col-md-12">
@@ -410,13 +410,13 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "R" %}
+                                                    {% if defi.etat == "R" %}
                                                         <div class="col-md-12" style="text-align: center;">
                                                             <h3> Vous avez refusé le défi. </h3>
                                                         </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "S" %}
+                                                    {% if defi.etat == "S" %}
                                                         <div class="col-md-12" style="text-align: center;">
                                                             <h3> Vous avez signalé la contestation comme abusive. </h3>
 
@@ -441,7 +441,7 @@
                                                         </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "EX" %}
+                                                    {% if defi.etat == "EX" %}
                                                         <div class="col-md-12" style="text-align: center;">
                                                             <h3> Le défi a expiré </h3>
                                                         </div>
