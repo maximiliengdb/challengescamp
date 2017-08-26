@@ -169,7 +169,7 @@
                                                     </div>
                                                     {% endif %}
 
-                                                    {% if defi.etat = "R" %}
+                                                    {% if defi.etat == "R" %}
                                                     <div class="col-md-12">
                                                         <div class="row">
                                                             <h3 style="text-align : center;"> {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} a refusé le défi. </h3>
