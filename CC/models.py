@@ -128,7 +128,14 @@ class Contestation(models.Model):
     def __str__(self):
         return self.nom
 
-
+class Signalement(models.Model):
+    motif = models.CharField(max_length=555, default="Sans Motif")
+    nom = models.CharField(max_length=255, default="Sans Nom")
+    
+    
+    def __str__(self):
+        return self.nom
+    
 class Recompense(models.Model):
     nom = models.CharField(max_length=255)
     decoration = models.CharField(max_length=255, default = "<span class='ti-bolt'> </span>")
@@ -154,12 +161,30 @@ class Sous_Theme(models.Model):
     def __str__(self):
         return self.nom
 
+
+class MapPoint(models.Model):
     
+    x = models.CharField(max_length=255, default="rien")
+    y = models.CharField(max_length=255, default="rien")
+    id_osm = models.CharField(max_length=255, default="rien")
+    nom = models.CharField(max_length=255, default="rien")
+    attribut = models.CharField(max_length=855, default="rien")
+    
+    categorie = models.CharField(max_length = 255, default="rien")
+    sous_categorie = models.CharField(max_length = 255, default="rien")
+    
+    def __str__(self):
+        return self.id_osm
+        
+        
+        
 class Libelle_Defi (models.Model):
     
     nom = models.CharField(max_length = 255, default="Sans Titre")
     description = models.CharField(max_length = 5000, default="Sans Description")
     recompense = models.ForeignKey(Recompense)
+    
+    nb_mins = models.IntegerField(default = 1) 
     
     theme = models.ForeignKey(Theme, default = 1)
     sous_theme = models.ForeignKey(Sous_Theme, default = 1)
@@ -237,6 +262,7 @@ class Defi(models.Model):
     expire = models.BooleanField(default = False)
     
     contestation = models.ForeignKey(Contestation, null = True)
+    signalement = models.ForeignKey(Signalement, null = True)
     preuve = models.ManyToManyField(Preuve)
     
     defieur = models.ForeignKey('Utilisateur' ,related_name="defieurdefi")
@@ -247,15 +273,6 @@ class Defi(models.Model):
     
     def __str__(self):
         return self.libelle.nom
-
-class Signalement(models.Model):
-    defi = models.ForeignKey(Defi)
-    motif = models.CharField(max_length=555, default="Sans Motif")
-    nom = models.CharField(max_length=255, default="Sans Nom")
-    
-    
-    def __str__(self):
-        return self.nom
     
 class Actualite (models.Model):
     

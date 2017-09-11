@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^inscription', views.inscription, name='Inscription'),
     url(r'^connexion', views.connexion, name='Connexion'),
     url(r'^deconnexion', views.deconnexion, name='Deconnexion'),
-    url(r'^recherche', views.recherche, name='Recherche'),
+    url(r'^recherche$', views.recherche, name='Recherche'),
     
     url(r'^compte/vestiaire/', views.user_dashboard, name='Dashboard'),
     url(r'^compte/parametre/changement_pp' , views.user_changement_pp, name='Changement PP'),
@@ -23,8 +23,10 @@ urlpatterns = [
     url(r'^compte/parametre/changement_mdp', views.user_changement_mdp, name='Profil Settings Page'),
     
     url(r'^compte/map/$', views.user_map, name='Map'),
+    url(r'^compte/map_preload/$', views.user_map_preload, name='Map'),
+    url(r'^compte/map_tri/', views.user_map_tri, name='Map'),
     url(r'^compte/map_error/$', views.user_map_error, name='Map'),
-    url(r'^compte/map/position/(?P<id_user>)(?P<latitude>)(?P<longitude>)$' , views.user_map_position, name='Map'),
+    url(r'^user_position_push/(?P<id_user>)(?P<longitude>)(?P<latitude>)$' , views.user_map_push_position, name='Map'),
     url(r'^user_position/(?P<id_user>)$' , views.user_map_track_user, name='Map'),
     url(r'^user_position_me/(?P<id_user>)$' , views.user_map_track_me, name='Map'),
     

@@ -17,16 +17,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         
                         <li style="margin-top : 5px;">
-                        <form action="/rechercher" method="POST" class="form-inline">
+                        <form action="/recherche" method="POST" class="form-inline">
                             {% csrf_token %}
                             <div class="visible-md visible-lg">
-                                <input class="form-control mr-sm-3" type="text" id"data" name="data" placeholder="Rechercher des challengeurs...">
+                                <input class="form-control mr-sm-3" id="data_grand" name="data_grand" placeholder="Rechercher des challengeurs...">
                                 <button class="btn btn-outline-success" style="margin-right : 5px;" type="submit"><i class="ti-search"></i></button> 
                             </div>
                             <div class="visible-xs visible-sm">
-                                <input class="form-control mr-sm-3" type="text" id"data" name="data" placeholder="Rechercher ...">
-                            </div>  
-
+                                <input class="form-control mr-sm-3" id="data" name="data" placeholder="Rechercher ...">
+                            </div>
                         </form>
                         </li>
 
@@ -84,8 +83,8 @@
             <div class="col-xs-4">
 
                     <div class="dropdown">
-                        <a type="button" style=" border-radius: 5px; margin-left : 15px; margin-top : 5%"  href="#" class="btn btn-block btn-primary dropdown-toggle nbre_notification" data-toggle="dropdown">
-                            <p id="notificationspetit"><img class="image-responsive" style=" height : 17px; margin : 5%;" src="{% static 'image/icone/world.svg' %}"> {{notifications_new|length}}</p>  
+                        <a type="button" style=" border-radius: 5px; margin-left : 15px; margin-top : 5%; padding-bottom : 0px;"  href="#" class="btn btn-block btn-primary dropdown-toggle nbre_notification" data-toggle="dropdown">
+                            <p id="notificationspetit"><img class="image-responsive" style=" height : 21px; margin : 5%;" src="{% static 'image/icone/world.svg' %}"><span class="badge" style="margin-left : -10px; margin-top  : 10px;"> {{notifications_new|length}}</span></p>  
                         </a>
                         <ul class="dropdown-menu">
     

@@ -144,12 +144,11 @@
             var result = fuse.search(" ");
             var x;
 
-            console.log (result);
             var html = "";
 
             for (x in result) {
                 var decoration = result[x].niveau
-                html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> Pts : '+ result[x].niveau +'</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
+                html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
                             
             }
 

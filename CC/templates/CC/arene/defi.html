@@ -2,48 +2,6 @@
 {% block content %}
 {% load staticfiles %}
 
-{% for preuve in photos %}
-<div class="modal fade" id="{{preuve.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-
-            </button>
-        </div>
-        <div class="modal-body">
-            <img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/>
-        </div>
-    </div>
-</div>
-</div>
-{% endfor %}
-
-{% for preuve in videos %}
-<div class="modal fade" id="{{preuve.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="embed-responsive embed-responsive-16by9">
-        <video controls>
-            <source src="{{preuve.fichier.url}}" type="video/mp4">
-        </video>
-        </div>
-    </div>
-    </div>
-</div>
-</div>
-{% endfor %}
-
 {% include "CC/naviguation.html" %}
 
     <div class="content">
@@ -93,6 +51,145 @@
                                     <div class="content">
                                         <div class="row">
                                             <div class="col-md-12"> 
+
+                                                {% if visiteur == True %}
+
+                                                    {% if defi.etat == "E" %}
+                                                    <div class="col-md-12">
+                                                        <div class="row" style="text-align : center;">
+                                                            <h3 id="afficherheure"></h3>
+                                                            <small> restant à {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} pour accepter le défi!</small>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "A" %}
+                                                    <div class="col-md-12">
+                                                        <div class="row" style="text-align : center;">
+                                                            <h3 id="afficherheure"></h3>
+                                                            <small> restant à {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} pour réaliser le défi!</small>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "AV" %}
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12" style="text-align : center;">
+                                                                <h4> Le défi est en attente de validation par {{defi.defieur.first_name|title}} {{defi.defieur.last_name|title}} </h4>
+                                                            </div>
+                                                            
+                                                            {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
+
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
+                                                           
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "EX" %}
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <h3> Le défi à expiré </h3>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "R" %}
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <h3 style="text-align : center;"> {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} a refusé le défi. </h3>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "V" %}
+                                                    <div class="col-md-12" style="text-align: center;">
+                                                        <h3 > Le défi a été validé ! Bravo {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} </h3>
+                                                    <hr>
+                                                        <h4>Voici les preuves</h4>
+
+                                                    {% for preuve in photos %}
+                                                    <div class="col-md-4">
+                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% for preuve in videos %}
+                                                    <div class="col-md-4">
+                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
+                                                            <video width="320" height="240">
+                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                            </video>
+                                                        </button>
+                                                    </div>
+                                                    {% endfor %}
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "C" %}
+                                                    <div class="col-md-12" style="text-align: center;">
+                                                        <h3> {{defi.defieur.first_name|title}} {{defi.defieur.last_name|title}} a contesté le défi. </h3>
+                                                        <hr>
+                                                        <h4>Voici pourquoi</h4>
+                                                        <p>{{defi.contestation.contenu}}</p>
+
+                                                        <hr>
+                                                        <h4>Voici les preuves</h4>
+
+                                                        {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                            <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
+
+                                                            <div id="myModal" class="modal">
+                                                            <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                            <img class="modal-content" id="img01">
+                                                            <div id="caption"></div>
+                                                            </div>
+                                                        {% endfor %}
+
+                                                        {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                            <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                            <video controls>
+                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                            </video>
+                                                            </div>
+                                                            </div>
+                                                        {% endfor %}
+
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if defi.etat == "S" %}
+                                                    <div class="col-md-12" style="text-align: center;">
+                                                        <h3> La contestation a été signalée comme abusive. </h3>
+                                                    </div>
+                                                    {% endif %}
+
+                                                {% endif %}
+
+                                                {% if visiteur == False %}
+                                                
                                                 {% if defi.defieur.id == utilisateur.id %}
                                                     {% if defi.etat == "E" %}
                                                         <div class="col-md-12">
@@ -121,26 +218,38 @@
                                                             
                                                             {% for preuve in photos %}
                                                             <div class="col-md-4">
-                                                                <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
                                                             </div>
+
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
                                                             {% endfor %}
+                                                            
                                                             {% for preuve in videos %}
-                                                            <div class="col-md-4">
-                                                                <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                                    <video width="320" height="240">
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
                                                                         <source src="{{preuve.fichier.url}}" type="video/mp4">
                                                                     </video>
-                                                                </button>
+                                                                </div>
                                                             </div>
                                                             {% endfor %}
+                                                            
                                                             <div class="col-md-12" style="margin-top : 1%;">
-                                                                <a class="btn btn-primary" href="/arene/defi_valide/?id_defi={{defi.id}}" >
-                                                                    Valider le défi
-                                                                </a>
-
-                                                                <a class="btn btn-danger" data-toggle="collapse" href="#contester" aria-expanded="false" aria-controls="contester">
-                                                                    Contester
-                                                                </a>
+                                                                <div class="col-md-6">
+                                                                    <a class="btn btn-primary btn-block" href="/arene/defi_valide/?id_defi={{defi.id}}" >
+                                                                        Valider le défi
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <a class="btn btn-danger btn-block" data-toggle="collapse" href="#contester" aria-expanded="false" aria-controls="contester">
+                                                                        Contester
+                                                                    </a>
+                                                                </div>
 
                                                                 <div class="collapse" id="contester" style="margin-top : 1%;">
                                                                         <form method="post" action="/arene/defi_contestation">
@@ -182,21 +291,28 @@
                                                         <h3 > Vous avez validé le défi. </h3>
                                                     <hr>
                                                         <h4>Voici les preuves</h4>
+                                                            {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div> 
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
                                                     </div>
                                                     {% endif %}
 
@@ -209,21 +325,28 @@
 
                                                         <hr>
                                                         <h4>Voici les preuves</h4>
+                                                            {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
                                                     </div>
                                                     {% endif %}
 
@@ -260,21 +383,28 @@
                                                         </div>
                                                     
                                                     <h4>Voici les preuves</h4>
+                                                        {% for preuve in photos %}
+                                                        <div class="col-md-4">
+                                                            <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                        </div>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                            <div id="myModal" class="modal">
+                                                            <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                            <img class="modal-content" id="img01">
+                                                            <div id="caption"></div>
+                                                            </div>
+                                                        
+                                                        {% endfor %}
+                                                        
+                                                        {% for preuve in videos %}
+                                                        <div class="col-md-4" >
+                                                            <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                <video controls>
+                                                                    <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                </video>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
 
                                                         </div>
                                                     </div>
@@ -320,20 +450,28 @@
                                                         </div>
                                                         <h4>Voici les preuves</h4>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                        {% for preuve in photos %}
+                                                        <div class="col-md-4">
+                                                            <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                        </div>
+
+                                                            <div id="myModal" class="modal">
+                                                            <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                            <img class="modal-content" id="img01">
+                                                            <div id="caption"></div>
+                                                            </div>
+                                                        
+                                                        {% endfor %}
+                                                        
+                                                        {% for preuve in videos %}
+                                                        <div class="col-md-4" >
+                                                            <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                <video controls>
+                                                                    <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                </video>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
 
                                                     </div>
                                                     {% endif %}
@@ -393,20 +531,29 @@
                                                         
                                                         <h4 style="text-align : center;">Voici les preuves</h4>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                            {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
+
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
+                                                    
                                                     </div>
                                                     {% endif %}
 
@@ -423,20 +570,29 @@
                                                             <hr>
                                                         <h4>Voici les preuves</h4>
 
-                                                    {% for preuve in photos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo"><img alt="{{preuve.nom}}" src="{{preuve.fichier.url}}" class="img-responsive"/></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% for preuve in videos %}
-                                                    <div class="col-md-4">
-                                                        <button type="button" class="btn" data-toggle="modal" data-target="#{{preuve.id}}" data-whatever="@mdo">
-                                                            <video width="320" height="240">
-                                                                <source src="{{preuve.fichier.url}}" type="video/mp4">
-                                                            </video>
-                                                        </button>
-                                                    </div>
-                                                    {% endfor %}
+                                                            {% for preuve in photos %}
+
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
+
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
 
                                                         </div>
                                                     {% endif %}
@@ -447,7 +603,8 @@
                                                         </div>
                                                     {% endif %}
 
-                                                {% endif %}                                                              
+                                                {% endif %} 
+                                                {% endif %}                                                             
                                         
                                             </div>
                                         </div>
@@ -504,6 +661,32 @@
                 });
                 alert(url);
             });
+
+            {% for preuve in photos %}
+               
+            // Get the modal
+            var modal = document.getElementById('myModal');
+
+            // Get the image and insert it inside the modal - use its "alt" text as a caption
+            var img = document.getElementById('{{preuve.nom}}{{preuve.id}}');
+            var modalImg = document.getElementById("img01");
+            var captionText = document.getElementById("caption");
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.alt;
+            }
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() { 
+            modal.style.display = "none";
+            }
+
+            {% endfor %}
+
         </script>
 
     {% endblock %}

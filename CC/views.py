@@ -23,6 +23,9 @@ from django.http import JsonResponse
 from io import StringIO, BytesIO
 from PIL import Image
 from resizeimage import resizeimage
+import csv
+from django.db.models import Q
+from django.core.serializers import serialize
 
 def mise_a_jour (request):
     
@@ -264,6 +267,9 @@ def user_dashboard (request):
     
     message, type_message = message_alerte(request)
     
+    test = len(MapPoint.objects.all())
+    test2 = MapPoint.objects.filter(Q(y__gte = 2.24430)&Q(y__lte = 2.24318),Q(x__lte = 48.83425)&Q(x__gte = 48.83306))
+    
     nom_page = "Le Vestiaire"
     
     nb_defis_gagnes = len(Defi.objects.filter(challengeur = utilisateur, etat = "V"))
@@ -453,6 +459,7 @@ def user_changement_mdp (request):
   
     return render(request, 'CC/user/compte/changement_mdp.html', locals())
 
+
 @login_required(login_url='connexion')
 def user_map (request):
     
@@ -461,6 +468,38 @@ def user_map (request):
     notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
     message, type_message = message_alerte(request)
     nom_page = "La Map"
+    
+    y = float(utilisateur.latitude)
+    x = float(utilisateur.longitude)
+    
+    xmoins = x - 0.12
+    ymoins = y - 0.09
+    
+    xplus = x + 0.12
+    yplus = y + 0.09
+    
+    raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?')[:2950]
+    nb_raws = len(raws)
+    points = []
+    
+    for raw in raws :
+        points.append(raw)
+        
+    if nb_raws < 3000 :
+        
+        xmoins = x - 0.02
+        ymoins = y - 0.009
+        xplus = x + 0.02
+        yplus = y + 0.009
+        
+        while (3000 - nb_raws) > 1 :
+            x = random.uniform(xmoins, xplus)
+            y = random.uniform(ymoins, yplus)
+            point = MapPoint(y = str(y), x = str(x) ,nom = "Point au hasard", id_osm = "XXXXXX", attribut = "Challenges.Camp point d'intéret")
+            points.append(point)
+            nb_raws = nb_raws + 1
+        
+    icone_sport = Photo.objects.get(nom = "icone-sport")
     
     users = utilisateur.amis.all().exclude(position = False)
     
@@ -478,28 +517,9 @@ def user_map_error (request):
     return render(request, 'CC/user/compte/map_error.html', locals())
 
 
-def user_map_position (request, id_user, latitude, longitude):
+def user_map_preload (request):
     
-    id_user = request.GET['id_user']
-    utilisateur = Utilisateur.objects.get(id = id_user)
-    date = datetime.now()
-    
-    try:
-        latitude = request.GET['latitude']
-        longitude = request.GET['longitude']
-        
-    except : 
-        latitude = "0"
-        longitude = "0"
-        pass
-    
-    utilisateur.latitude = latitude
-    utilisateur.longitude = longitude
-    utilisateur.derniere_connexion = date
-    utilisateur.position = True
-    utilisateur.save()
-    
-    return
+    return render(request, 'CC/user/compte/map_preload.html', locals())
 
 
 def user_map_track_user(request, id_user):
@@ -516,6 +536,36 @@ def user_map_track_me(request, id_user):
     user = Utilisateur.objects.get(id = id_user)
     
     return JsonResponse({"geometry": { "type": "Point", "coordinates": [user.longitude , user.latitude]}, "type": "Feature", "properties": {"description": "<p><strong>Moi</strong></br><a href='/compte/profil_public/?profil="+str(user.id)+"'>Voir Profil</a></p>",}})
+
+def user_map_push_position(request, id_user, latitude, longitude):
+    
+    id_user = request.GET['id_user']
+    latitude = request.GET['latitude']
+    longitude = request.GET['longitude']
+    user = Utilisateur.objects.get(id = id_user)
+    
+    user.longitude = longitude
+    user.latitude = latitude
+    
+    user.save()
+    
+    return
+
+@login_required(login_url='connexion') 
+def user_map_tri(request):
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
+    message, type_message = message_alerte(request)
+    nom_page = "Map"
+    
+    points = MapPoint.objects.filter(attribut__contains = 'restaurant')
+    
+    for point in points :
+        point.categorie = "cuisine"
+        point.save()
+    
+    return  render(request, 'CC/user/compte/map_tri.html', locals())
 
 
 @login_required(login_url='connexion') 
@@ -785,33 +835,43 @@ def user_classement (request):
     themes = Theme.objects.all()
     nom_page = "Les Classements"
     
-    classement_absolu = Utilisateur.objects.all().order_by('-score_absolu')
-    utilisateurs = list(classement_absolu)
+    classements = {}
+    
+    
+    absolu = Utilisateur.objects.all().order_by('-score_absolu')
+    utilisateurs = list(absolu)
     rang_absolu = utilisateurs.index(utilisateur) + 1
+    classements['absolu'] = absolu
     
-    classement_sport = Utilisateur.objects.all().order_by('-score_sport')
-    utilisateurs = list(classement_sport)
+    sport = Utilisateur.objects.all().order_by('-score_sport')
+    utilisateurs = list(sport)
     rang_sport = utilisateurs.index(utilisateur) + 1
+    classements['sport'] = sport
     
-    classement_cuisine = Utilisateur.objects.all().order_by('-score_cuisine')
-    utilisateurs = list(classement_cuisine)
+    cuisine = Utilisateur.objects.all().order_by('-score_cuisine')
+    utilisateurs = list(cuisine)
     rang_cuisine = utilisateurs.index(utilisateur) + 1
+    classements['cuisine'] = cuisine
     
-    classement_extreme = Utilisateur.objects.all().order_by('-score_extreme')
-    utilisateurs = list(classement_extreme)
+    extreme = Utilisateur.objects.all().order_by('-score_extreme')
+    utilisateurs = list(extreme)
     rang_extreme = utilisateurs.index(utilisateur) + 1
+    classements['extreme'] = extreme
     
-    classement_arts = Utilisateur.objects.all().order_by('-score_arts')
-    utilisateurs = list(classement_arts)
+    arts = Utilisateur.objects.all().order_by('-score_arts')
+    utilisateurs = list(arts)
     rang_arts = utilisateurs.index(utilisateur) + 1
+    classements['arts'] = arts
     
-    classement_social_environnement = Utilisateur.objects.all().order_by('-score_social_environnement')
-    utilisateurs = list(classement_social_environnement)
+    social_environnement = Utilisateur.objects.all().order_by('-score_social_environnement')
+    utilisateurs = list(social_environnement)
     rang_social_environnement = utilisateurs.index(utilisateur) + 1
+    classements['social_environnement'] = social_environnement
     
-    classement_autre = Utilisateur.objects.all().order_by('-score_autre')
-    utilisateurs = list(classement_autre)
+    autre = Utilisateur.objects.all().order_by('-score_autre')
+    utilisateurs = list(autre)
     rang_autre = utilisateurs.index(utilisateur) + 1
+    classements['autre'] = autre
     
     return render(request, 'CC/user/compte/classements.html', locals())
 
@@ -837,43 +897,21 @@ def recherche (request):
     amis_nom = []
     amis_prenom = []
     amis_full_name = []
-
     
-    if request.method == 'POST':
-        raw_data = request.POST['data'].lower()
+    utilisateurs = Utilisateur.objects.all().exclude(id = utilisateur.id)
+    
+    if request.method == "POST":
+        try :
+            raw_data = str(request.POST['data'])
+        except :
+            pass
+        
+        if raw_data :
+            raw_data = str(request.POST['data'])
+        else :
+            raw_data = str(request.POST['data_grand'])
        
-        try : 
-            amis_pseudo = Utilisateur.objects.filter(username=raw_data)
-        except :  
-            pass
-        try : 
-            amis_nom = Utilisateur.objects.filter(last_name=raw_data)
-        except :  
-            pass
-        try : 
-            amis_prenom = Utilisateur.objects.filter(first_name=raw_data)
-        except :  
-            pass
-        try : 
-            amis_full_name = Utilisateur.objects.filter(full_name=raw_data)
-        except :  
-            pass
        
-        for ami in amis_pseudo :
-            if not ami in data_ami and ami != utilisateur :
-                data_ami.append(ami) 
-
-        for ami in amis_nom :
-            if not ami in data_ami and ami != utilisateur:
-                data_ami.append(ami)
-                                    
-        for ami in amis_prenom :
-            if not ami in data_ami and ami != utilisateur:
-                data_ami.append(ami)
-                    
-        for ami in amis_full_name :
-            if not ami in data_ami and ami != utilisateur :
-                data_ami.append(ami)
                 
     return render(request, 'CC/recherche.html', locals())
 
@@ -945,7 +983,8 @@ def arene_defi_page (request, id_defi):
     
     photos = []
     videos = []
-  
+    visiteur = False
+    
     if defi.date_execution :
         
         defi_date = defi.date_execution
@@ -954,7 +993,7 @@ def arene_defi_page (request, id_defi):
         
         try :
             contestation = defi.contestation
-        except : 
+        except :  
             pass
         
         for preuve in defi.preuve.all():
@@ -981,13 +1020,20 @@ def arene_defi_page (request, id_defi):
         temp = timedelta(days = 7)
         date_butoire = defi_date+temp
         
-          
-    if defi.challengeur == utilisateur or defi.defieur == utilisateur :
-        pass
-    else :
-        request.session['messages']= "Vous n'avez pas le droit d'aller là!"
-        return redirect(arene_accueil)
     
+    if defi.prive == True :     
+        if defi.challengeur == utilisateur or defi.defieur == utilisateur :
+            pass
+        else :
+            request.session['message']= "Vous n'avez pas le droit d'aller là. Ceci est un défi privé!"
+            request.session['type_message'] = "alert-warning"
+            return redirect(arene_accueil)
+    else :
+        if defi.challengeur == utilisateur or defi.defieur == utilisateur :
+            pass
+        else :
+            visiteur = True
+        
     return render(request, 'CC/arene/defi.html', locals())
 
 @login_required(login_url='connexion')
@@ -1036,9 +1082,11 @@ def arene_defi_lance (request):
     
     try :
         enjeu = request.POST['enjeu']
+        if enjeu == "" :
+            enjeu = "Sans Enjeu"
         
     except :
-        enjeu = "Sans enjeu"
+        enjeu = "Sans Enjeu"
         pass
     
     defi = Defi(libelle=defi, prive=prive, etat="E", defieur=utilisateur, enjeu_perso = enjeu, challengeur=ami, date_envoie = date)
@@ -1174,7 +1222,8 @@ def arene_defi_valide (request, id_defi):
     if defi.prive == False :
         
         message = str (defi.challengeur.username +" a relevé le défi de "+ defi.defieur.username + " haut la main! Il devait : " +defi.libelle.nom)
-        actu = Actualite(message = message, nom = "Defi", personne_concernee =  defi.challengeur)
+        lien = "/arene/defi/?id_defi="+str(defi.id)
+        actu = Actualite(message = message, nom = "Defi", personne_concernee =  defi.challengeur, lien = lien)
         actu.save()
     
        
@@ -1229,8 +1278,15 @@ def arene_defi_conteste (request):
         defi.contestation = contestation
         defi.save()
         
-        utilisateur.score_absolu = utilisateur.score_absolu + defi.recompense.points
+        utilisateur.score_absolu = utilisateur.score_absolu + defi.libelle.recompense.points
         utilisateur.save()
+        
+        if defi.prive == False :
+        
+            message = str (defi.challengeur.username +" n'a pas réussi le défi de "+ defi.defieur.username + " : " +defi.libelle.nom)
+            lien = "/arene/defi/?id_defi="+str(defi.id)
+            actu = Actualite(message = message, nom = "Defi", personne_concernee =  defi.challengeur, lien = lien)
+            actu.save()
 
     defi.save()
     
@@ -1260,6 +1316,9 @@ def arene_defi_signale (request):
         
         signalement.save()
         
+        
+        defi.signalement = signalement
+        defi.save()
 
     defi.save()
     

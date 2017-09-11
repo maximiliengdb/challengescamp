@@ -118,308 +118,118 @@
                         <div class="row">
                             <div class="col-md-12" style="margin-bottom : 10px;">
 
-                                <a class="btn btn-primary"  role="button" href="#absolu">
-                                    Classement Général
-                                </a>
-
-                                {% for theme in themes %}
-
-                                    <a class="btn btn-primary {{theme.nom|lower}}" role="button" style="border-color : {{theme.couleur}};" href="#test{{theme.nom|lower}}" >
-                                        Classement {{theme.nom}}
-                                    </a>
-
-                                {% endfor %}
-                            
-                            </div>
-                            <div id="absolu">
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="header">
-                                            <h4 class="title">Classement General</h4>
-                                            <p class="category">Le classement des challengeurs toutes catégories confondues</p>
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel panel-default">
+                                      <div class="panel-heading" role="tab" id="headingOne">
+                                        <h4 class="panel-title">
+                                          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            Classement Général
+                                          </a>
+                                        </h4>
+                                      </div>
+                                      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                        <div class="panel-body">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Classement General</h4>
+                                                    <p class="category">Le classement des challengeurs toutes catégories confondues</p>
+                                                </div>
+                                                <div class="content">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <th>#</th>
+                                                            <th>Nom</th>
+                                                            <th>Points</th>
+                                                            <th>Nationalité</th>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for challengeur in absolu %}
+                                                                {% if challengeur.id == utilisateur.id %}
+                                                                <tr class="classement_absolu" style="display:none;">
+                                                                    <td>{{forloop.counter}}</td>
+                                                                    <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
+                                                                    <td>{{challengeur.score_absolu}}</td>
+                                                                    <td>Niger</td>
+                                                                </tr>
+                                                                {% else %}
+                                                                <tr class="classement_absolu" style="display:none;">
+                                                                    <td>{{forloop.counter}}</td>
+                                                                    <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
+                                                                    <td>{{challengeur.score_absolu}}</td>
+                                                                    <td>Niger</td>
+                                                                </tr>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                    <a class="btn btn-default btn-block" href="#" id="loadclassement_absolu">Voir + de challengeur</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="content">
-                                            <table class="table table-striped">
-                                                <thead>
-                                                    <th>#</th>
-                                                    <th>Nom</th>
-                                                    <th>Points</th>
-                                                    <th>Nationalité</th>
-                                                </thead>
-                                                <tbody>
-                                                    {% for challengeur in classement_absolu %}
-                                                        {% if challengeur.id = utilisateur.id %}
-                                                        <tr class="classement_absolu" style="display:none;">
-                                                            <td>{{forloop.counter}}</td>
-                                                            <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                            <td>{{challengeur.score_absolu}}</td>
-                                                            <td>Niger</td>
-                                                        </tr>
-                                                        {% else %}
-                                                        <tr class="classement_absolu" style="display:none;">
-                                                            <td>{{forloop.counter}}</td>
-                                                            <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                            <td>{{challengeur.score_absolu}}</td>
-                                                            <td>Niger</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                            <a class="btn btn-default btn-block" href="#" id="loadclassement_absolu">Voir + de challengeur</a>
+                                      </div>
+                                    </div>
+                                    
+                                    {% for theme in themes %}
+                                    {% for key, classement in classements.items %}
+
+                                    {% if theme.nom|lower == key %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="headingTwo">
+                                          <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#{{theme.nom}}" aria-expanded="false" aria-controls="collapseTwo">
+                                                Classement {{theme.nom}}
+                                            </a>
+                                          </h4>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div id="extreme">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Extreme</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_extreme %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                    <tr class="classement_extreme" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                        <td>{{challengeur.score_extreme}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% else %}
-                                                    <tr class="classement_extreme" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                        <td>{{challengeur.score_extreme}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_extreme">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
+                                        <div id="{{theme.nom}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                          <div class="panel-body">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Classement {{theme.nom}}</h4>
+                                                    <p class="category">{{theme.descritption}}</p>
+                                                </div>
+                                                <div class="content">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <th>#</th>
+                                                            <th>Nom</th>
+                                                            <th>Points</th>
+                                                            <th>Nationalité</th>
+                                                        </thead>
+                                                        <tbody>
 
-                            
-                            <div id="testsport">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Sport</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_sport %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                    <tr class="classement_sport" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                        <td>{{challengeur.score_sport}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% else %}
-                                                    <tr class="classement_sport" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                        <td>{{challengeur.score_sport}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_sport">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
 
-                            <div id="cuisine">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Cuisine</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_cuisine %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                        <tr class="classement_cuisine" style="display:none;">
-                                                            <td>{{forloop.counter}}</td>
-                                                            <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                            <td>{{challengeur.score_cuisine}}</td>
-                                                            <td>Niger</td>
-                                                        </tr>
-                                                        {% else %}
-                                                        <tr class="classement_cuisine" style="display:none;">
-                                                            <td>{{forloop.counter}}</td>
-                                                            <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                            <td>{{challengeur.score_cuisine}}</td>
-                                                            <td>Niger</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_cuisine">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
+                                                            {% for challengeur in classement %}
+                                                                {% if challengeur.id == utilisateur.id %}
+                                                                <tr class="classement_{{theme.nom|lower}}" style="display:none;">
+                                                                    <td>{{forloop.counter}}</td>
+                                                                    <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
+                                                                    <td>{{challengeur.score_absolu}}</td>
+                                                                    <td>Niger</td>
+                                                                </tr>
+                                                                {% else %}
+                                                                <tr class="classement_{{theme.nom|lower}}" style="display:none;">
+                                                                    <td>{{forloop.counter}}</td>
+                                                                    <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
+                                                                    <td>{{challengeur.score_absolu}}</td>
+                                                                    <td>Niger</td>
+                                                                </tr>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                    <a class="btn btn-default btn-block" href="#" id="loadclassement_{{theme.nom|lower}}">Voir + de challengeur</a>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
 
-                            <div id="classementarts">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Arts</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_arts %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                    <tr class="classement_arts" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                        <td>{{challengeur.score_arts}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% else %}
-                                                    <tr class="classement_arts" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                        <td>{{challengeur.score_arts}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_arts">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
+                                  </div>
                             </div>
-
-                            <div id="classementsocial">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Social Environnement</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_social_environnement %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                    <tr class="classement_social_environnement" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                        <td>{{challengeur.score_social_environnement}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% else %}
-                                                    <tr class="classement_social_environnement" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                        <td>{{challengeur.score_social_environnement}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_social_environnement">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-                            <div id="classementautre">
-                                <div class="col-md-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">Classement Autre</h4>
-                                        <p class="category">Le classement des challengeurs toutes catégories confondues</p>
-                                    </div>
-                                    <div class="content">
-                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Points</th>
-                                                <th>Nationalité</th>
-                                            </thead>
-                                            <tbody>
-                                                {% for challengeur in classement_autre %}
-                                                    {% if challengeur.id = utilisateur.id %}
-                                                    <tr class="classement_autre" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><strong><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></strong></td>
-                                                        <td>{{challengeur.score_autre}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% else %}
-                                                    <tr class="classement_autre" style="display:none;">
-                                                        <td>{{forloop.counter}}</td>
-                                                        <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
-                                                        <td>{{challengeur.score_autre}}</td>
-                                                        <td>Niger</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        <a class="btn btn-default btn-block" href="#" id="loadclassement_autre">Voir + de challengeur</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-            
                         </div>
 
                         <div class="footer">

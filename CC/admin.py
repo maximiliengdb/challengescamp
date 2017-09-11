@@ -1,5 +1,24 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 from CC.models import *
+from django.forms import ModelForm
+from importcsvadmin.admin import ImportCSVModelAdmin
+
+class MyAdminImporter(ModelForm):
+    class Meta:
+        model = MapPoint
+        fields = ('y', 'x', 'id_osm', 'nom', 'attribut')
+
+
+class MyAdminForm(ModelForm):
+    class Meta:
+        model = MapPoint
+        fields = ('y', 'x', 'id_osm', 'nom', 'attribut')
+
+class MyAdmin(ImportCSVModelAdmin):
+    importer_class = MyAdminImporter
+    form = MyAdminForm
 
 class UtilisateurAdmin(admin.ModelAdmin):
    list_display   = ('username', 'first_name', 'last_name')
@@ -8,10 +27,10 @@ class UtilisateurAdmin(admin.ModelAdmin):
    search_fields  = ('username', 'first_name')
 
 class DefiAdmin(admin.ModelAdmin):
-    list_display   = ('libelle', 'defieur', 'challengeur', 'date_envoie', 'etat')
+    list_display   = ('id','libelle', 'defieur', 'challengeur', 'date_envoie', 'etat')
     date_hierarchy = 'date_envoie'
     ordering = ('-date_envoie',)
-    search_fields  = ('libelle', 'etat')
+    search_fields  = ('id', 'libelle', 'etat')
     
     def libelleDefi(self, Defi):    
         return self.libelle.nom
@@ -37,6 +56,9 @@ class libellePropisitionDefi(admin.ModelAdmin):
 class libelleNotification(admin.ModelAdmin):
     list_display   = ('type', 'message', 'auteur', 'recepteur', 'date',)
     
+class libelleMapPoint(admin.ModelAdmin):
+    list_display   = ('id_osm', 'nom', 'attribut', 'categorie', 'sous_categorie')
+    
 
 admin.site.register(Utilisateur, UtilisateurAdmin),
 admin.site.register(Signalement),
@@ -55,3 +77,4 @@ admin.site.register(MAJ, libelleMaj),
 admin.site.register(Libelle_Quete),
 admin.site.register(Quete),
 admin.site.register(Actualite),
+admin.site.register(MapPoint, libelleMapPoint),

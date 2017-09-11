@@ -29,30 +29,7 @@
                                         <div class="col-md-12">                                               
                                             <h6 class="card-subtitle mb-2 text-muted"><a href='/arene/defi/?id_defi={{defi.id}}'> {{defi.libelle.nom|title}} </a> <small> ({{defi.libelle.theme.nom|title}}) </small> 
                                             <span class="badge">
-                                                {% if defi.etat = "E" %}
-                                                NEW
-                                                {% endif %}
-                                                {% if defi.etat = "A" %}
-                                                EN COURS
-                                                {% endif %}
-                                                {% if defi.etat = "EX" %}
-                                                EXPIRE
-                                                {% endif %}
-                                                {% if defi.etat = "R" %}
-                                                REFUSE
-                                                {% endif %}
-                                                {% if defi.etat = "V" %}
-                                                VALIDE
-                                                {% endif %}
-                                                {% if defi.etat = "AV" %}
-                                                ATT DE VALIDATION
-                                                {% endif %}
-                                                {% if defi.etat = "C" %}
-                                                CONTESTE
-                                                {% endif %}
-                                                {% if defi.etat = "S" %}
-                                                SIGNALE
-                                                {% endif %}
+                                                {{defi.get_etat_display}}
                                             </span> 
                                             </br> defieur : {{defi.defieur.username|title}}</h6> <h7>{{defi.libelle.description|truncatechars:200}}</h7>                                                              
                                         <hr>
@@ -85,30 +62,7 @@
                                     <div class="col-md-12">                                               
                                         <h6 class="card-subtitle mb-2 text-muted"><a href='/arene/defi/?id_defi={{defi.id}}'> {{defi.libelle.nom|title}} </a> <small> ({{defi.libelle.theme.nom|title}}) </small> 
                                         <span class="badge">
-                                            {% if defi.etat = "E" %}
-                                            ENVOYE
-                                            {% endif %}
-                                            {% if defi.etat = "A" %}
-                                            EN COURS
-                                            {% endif %}
-                                            {% if defi.etat = "EX" %}
-                                            EXPIRE
-                                            {% endif %}
-                                            {% if defi.etat = "R" %}
-                                            REFUSE
-                                            {% endif %}
-                                            {% if defi.etat = "V" %}
-                                            VALIDE
-                                            {% endif %}
-                                            {% if defi.etat = "AV" %}
-                                            ATT DE VALIDATION
-                                            {% endif %}
-                                            {% if defi.etat = "C" %}
-                                            CONTESTE
-                                            {% endif %}
-                                            {% if defi.etat = "S" %}
-                                            SIGNALE
-                                            {% endif %}
+                                            {{defi.get_etat_display}}
                                         </span>
                                         </br> challengeur : {{defi.challengeur.username|title}}</h6>
                                         <h7>{{defi.libelle.description|truncatechars:200}}</h7>                                                              

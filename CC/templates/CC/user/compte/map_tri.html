@@ -1,0 +1,44 @@
+{% extends "CC/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+{% include "CC/naviguation.html" %}
+
+        <div class="content">
+            <div class="container-fluid" style="margin-bottom : 40px;">
+
+            {% if message != 'False' %}
+                <div class="alert {{type_message}}">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+                    <span>{{message}}</span>
+                </div>
+            {% endif %}
+
+            {{points}}
+                        
+             </div>
+        </div>
+
+
+{% block javascript %}
+<script>
+
+    $('.nbre_notification').click(function () {
+            $.ajax({
+            url: '/compte/vue_notification/',
+            });
+            $("#notifications").load("/compte/vestiaire/ #notifications");
+            $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+        });
+        
+        $('div.block_notification').click(function () {
+            var id = $(this).attr('value');
+            $.ajax({
+            url: '/compte/active_notification/?notif_id='+id
+            });
+        });
+
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -5,7 +5,7 @@
 {% include "CC/naviguation.html" %}
 
         <div class="content">
-            <div class="container-fluid">
+            <div class="container-fluid" style="margin-bottom : 40px;">
 
             {% if message != 'False' %}
                 <div class="alert {{type_message}}">
@@ -14,21 +14,29 @@
                 </div>
             {% endif %}
 
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">MAP</h4><div id="demo"></div>
+                    <style>
+                        #fly {
+                            display: block;
+                            position: relative;
+                            margin: -100px 20px;
+                            width: 50px;
+                            height: 50px;
+                            padding: 10px;
+                            border: none;
+                            border-radius: 3px;
+                            font-size: 12px;
+                            text-align: center;
+                            color: #fff;
+                            background: #ee8a65;
+                        }
+                    </style>
+                   
+                    <div id='map' style='width: auto; height: 550px;'>
+                    
                     </div>
-                    <div class="content">
-                        
-                        <div id='map' style='width: auto; height: 500px;'></div>
-                    <div class="footer">
-                        <hr>
-                        <div class="stats">
-                            <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                    <br/>
+                    <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
+
              </div>
         </div>
 
@@ -46,23 +54,89 @@
     function success(pos) {
     var crd = pos.coords;
 
-    console.log('Your current position is:');
-    console.log(`Latitude : ${crd.latitude}`);
-    console.log(`Longitude: ${crd.longitude}`);
-    console.log(`More or less ${crd.accuracy} meters.`);
-    
     var map = new mapboxgl.Map({
     container: 'map',
     style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
     center: [crd.longitude, crd.latitude],
-    zoom: 14,
+    zoom: 17,
     });
+
+    document.getElementById('fly').addEventListener('click', function () {
+        // Fly to a random location by offsetting the point -74.50, 40
+        // by up to 5 degrees.
+        map.flyTo({
+            center: [crd.longitude, crd.latitude],
+            zoom: 17,
+        });
+    });
+
+    window.setInterval(function() {
+        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+        });
+    }, 3000);
 
     map.addControl(new mapboxgl.NavigationControl());
     
-
     map.on('load', function () {
-      
+
+        map.loadImage('{{icone_sport.image.url}}', function(error, image) {
+            if (error) throw error;
+            map.addImage('cat', image);
+
+            map.addLayer({
+                "id": "places",
+                "type": "symbol",
+                "source": {
+                    "type": "geojson",
+                    "data": {
+                        "type": "FeatureCollection",
+                        "features": [
+
+                        {% for point in points %}
+
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "description": "{{point.attribut}}",
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [{{point.x}}, {{point.y}}]
+                                }
+                            },
+
+                        {% endfor %}
+
+                        ]
+                    }
+                },
+                "layout": {
+                    "icon-image": "cat",
+                    "icon-size": 0.45,
+                    "icon-allow-overlap": true
+                }
+            });
+        });
+
+    // When a click event occurs on a feature in the places layer, open a popup at the
+    // location of the feature, with description HTML from its properties.
+    map.on('click', 'places', function (e) {
+        new mapboxgl.Popup()
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(e.features[0].properties.description)
+            .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'places', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'places', function () {
+        map.getCanvas().style.cursor = '';
+    });
+
     {% for user in users %}
     map.loadImage('{{user.pp.image.url}}', function(error, image) {
         if (error) throw error;
@@ -88,25 +162,25 @@
                         }
                     });
 
-                    // When a click event occurs on a feature in the places layer, open a popup at the
-                    // location of the feature, with description HTML from its properties.
-                    map.on('click', '{{user.id}}', function (e) {
-                        new mapboxgl.Popup()
-                            .setLngLat(e.features[0].geometry.coordinates)
-                            .setHTML(e.features[0].properties.description)
-                            .addTo(map);
-                    });
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', '{{user.id}}', function (e) {
+            new mapboxgl.Popup()
+                .setLngLat(e.features[0].geometry.coordinates)
+                .setHTML(e.features[0].properties.description)
+                .addTo(map);
+        });
 
-                    // Change the cursor to a pointer when the mouse is over the places layer.
-                    map.on('mouseenter', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = 'pointer';
-                    });
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', '{{user.id}}', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
 
-                    // Change it back to a pointer when it leaves.
-                    map.on('mouseleave', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = '';
-                    });
-                });
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', '{{user.id}}', function () {
+            map.getCanvas().style.cursor = '';
+        });
+    });
 
     {% endfor %}
     
@@ -124,8 +198,6 @@
             map.getSource('test').setData(utilisateur_position);
 
         }, 1000);
-
-
 
         map.addSource('test', { type: 'geojson', data: utilisateur_position });
         map.addLayer({
@@ -171,7 +243,6 @@
 
     navigator.geolocation.getCurrentPosition(success, error, options);
     
-
     $('.nbre_notification').click(function () {
             $.ajax({
             url: '/compte/vue_notification/',

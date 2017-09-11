@@ -15,31 +15,69 @@
                         </div>
                         <div class="content">
                             <div class="row">
-                            {% for ami in data_ami %}
-                            <div class="col-md-4">
-                                <div class="card card-user">
-                                    <div class="image">
-                                        <img src="{{ami.pp.url}}" alt="Photo de profil de {{ami.username}}"/>
-                                    </div>
-                                    <div class="content">
-                                        <div class="author">
-                                        <img class="avatar border-white"  src="{{ami.pp.url}}" alt="Photo de profil de {{ami.username}}"/>
-                                        <h4 class="title">{{ami.first_name|title }} {{ami.last_name|title }}<br />
-                                            <a href="#"><small>@{{ami.username}}</small></a>
-                                        </h4>
-                                        </div>
-                                        <p class="description text-center">
-                                           <a href="/compte/profil_public/?profil={{ami.id}}" class="btn btn-primary" style="margin : 1%;">Voir ses stats</a>
-                                           {% if ami in utilisateur.amis.all %}
+                                <div class="col-md-12">
+                                    <script src="{% static 'js/fuse.js' %}"></script>
+                                    <script>
+                                
+                                        var list = [ {% for utilisateur in utilisateurs %} { id : "{{utilisateur.id}}" , username : "{{utilisateur.username}}", nom : "{{utilisateur.last_name|title}}", prenom : "{{utilisateur.first_name|title}}", photopp : "{{utilisateur.pp.image.url}}", photopa : "{{utilisateur.pa.image.url}}", info : "{{utilisateur.info}}"}, {% endfor %} ];
+                                        
+                                        var test = "{{raw_data}}";
+                                
+                                        if (test){
+                                
+                                            var search = test;
+                                            
+                                            var options = {
+                                            shouldSort: true,
+                                            threshold: 0.1,
+                                            location: 0,
+                                            distance: 100,
+                                            maxPatternLength: 32,
+                                            minMatchCharLength: 1,
+                                            keys: [
+                                                "username",
+                                                "nom",
+                                                "prenom",
+                                                "photopp",
+                                                "photopa",
+                                                "info",
+                                            ]
+                                            };
+                                            
+                                            var fuse = new Fuse(list, options); // "list" is the item array
+                                            var result = fuse.search(search);
+                                            
+                                            var x;
+                                
+                                            var html = "";
+                                
+                                            for (x in result) {
+                                
+                                                html += '<div class="col-sm-3"><div class="card card-user"><div class="image"><img src="'+result[x].photopa+'" alt="Photo"/></div><div class="content"><div class="author"><img class="avatar border-white"  src="'+result[x].photopp+'" alt="Photo"/><a href="/compte/profil_public/?profil='+result[x].id+'"><h4 class="title">'+result[x].prenom + ' ' + result[x].nom+'<br /><small>@'+result[x].username+'</small></a></h4></div><p class="description text-center">'+result[x].info+'</div></div></div>';           
+                                            }
+                                
+                                            document.write(html);
+                                    
+                                            }; 
+                                        
+                                            
+                                        $('.nbre_notification').click(function () {
+                                                $.ajax({
+                                                    url: '/compte/vue_notification/',
+                                                });
+                                                $("#notifications").load("/compte/vestiaire/ #notifications");
+                                            });
+                                            
+                                            $('div.block_notification').click(function () {
+                                                var id = $(this).attr('value');
+                                                $.ajax({
+                                                    url: '/compte/active_notification/?notif_id='+id
+                                                });
+                                                alert(url);
+                                            });
 
-                                           {% else %}
-                                           <a href="/compte/demande_ami/?id_ami={{ami.id}}" class="btn btn-primary" style="margin : 1%;">Ajout à mes challengeurs</a>
-                                           {% endif %}
-                                        </p>
-                                    </div>
+                                    </script>	
                                 </div>
-                            </div>
-                            {% endfor %}
                             </div>
                             <div class="footer">
                                 <hr>
@@ -53,5 +91,6 @@
             </div>
         </div>
     </div>
-
+    
+    
 {% endblock %}
