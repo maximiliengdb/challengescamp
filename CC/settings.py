@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'CC',
-    'csvimport.app.CSVImportConf',
+#   'csvimport.app.CSVImportConf',
 ]
 
 
