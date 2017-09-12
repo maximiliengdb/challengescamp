@@ -3,22 +3,6 @@
 from django.contrib import admin
 from CC.models import *
 from django.forms import ModelForm
-from importcsvadmin.admin import ImportCSVModelAdmin
-
-class MyAdminImporter(ModelForm):
-    class Meta:
-        model = MapPoint
-        fields = ('y', 'x', 'id_osm', 'nom', 'attribut')
-
-
-class MyAdminForm(ModelForm):
-    class Meta:
-        model = MapPoint
-        fields = ('y', 'x', 'id_osm', 'nom', 'attribut')
-
-class MyAdmin(ImportCSVModelAdmin):
-    importer_class = MyAdminImporter
-    form = MyAdminForm
 
 class UtilisateurAdmin(admin.ModelAdmin):
    list_display   = ('username', 'first_name', 'last_name')
