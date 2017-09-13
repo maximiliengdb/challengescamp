@@ -22,8 +22,8 @@ class Utilisateur(User):
     
     position = models.BooleanField(default = False)
     derniere_connexion = models.DateTimeField(auto_now=False, default = now)
-    latitude = models.CharField(max_length = 255)
-    longitude = models.CharField(max_length = 255)
+    latitude = models.CharField(max_length = 255, default= "0")
+    longitude = models.CharField(max_length = 255, default= "0")
     
     email_valide = models.BooleanField(default = False)
     
@@ -184,7 +184,8 @@ class Libelle_Defi (models.Model):
     description = models.CharField(max_length = 5000, default="Sans Description")
     recompense = models.ForeignKey(Recompense)
     
-    nb_mins = models.IntegerField(default = 1) 
+    duree_acceptation = models.IntegerField(default = 1) 
+    duree_execution = models.IntegerField(default = 1) 
     
     theme = models.ForeignKey(Theme, default = 1)
     sous_theme = models.ForeignKey(Sous_Theme, default = 1)

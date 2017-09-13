@@ -34,6 +34,10 @@
                                     <div class="header">
                                         <h4 class="title">{{defi.libelle.nom}} <small>({{defi.libelle.theme.nom}})</h4>
                                         <p class="category">Envoyé le : {{defi.date_envoie}}</p>
+                                        <div id="jours"></div>
+                                        <div id="heures"></div>
+                                        <div id="minutes"></div>
+                                        <div id="secondes"></div>
                                     </div>
                                     <div class="content">
                                         <div class="row">
@@ -193,7 +197,7 @@
                                                 {% if defi.defieur.id == utilisateur.id %}
                                                     {% if defi.etat == "E" %}
                                                         <div class="col-md-12">
-                                                            <div class="row" style="text-align : center;">
+                                                            <div id = "contenu" class="row" style="text-align : center;">
                                                                 <h3 id="afficherheure"></h3>
                                                                 <small> restant à {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} pour accepter le défi!</small>
                                                             </div>
@@ -202,7 +206,7 @@
 
                                                     {% if defi.etat == "A" %}
                                                     <div class="col-md-12">
-                                                        <div class="row" style="text-align : center;">
+                                                        <div id = "contenu" class="row" style="text-align : center;">
                                                             <h3 id="afficherheure"></h3>
                                                             <small> restant à {{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}} pour réaliser le défi!</small>
                                                         </div>
@@ -210,10 +214,12 @@
                                                     {% endif %}
 
                                                     {% if defi.etat == "AV" %}
-                                                    <div class="col-md-12">
+                                                    <div id = "contenu" class="col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-12" style="text-align : center;">
-                                                                <h4> Le défi à été réalisé, veuillez valider les preuves soumises! </h4>
+                                                                
+                                                                <h4> Le défi à été réalisé, veuillez valider les preuves soumises! Il vous reste : <span id="afficherheure"></span> pour valider le défi!</h4>
+
                                                             </div>
                                                             
                                                             {% for preuve in photos %}
@@ -239,7 +245,7 @@
                                                             </div>
                                                             {% endfor %}
                                                             
-                                                            <div class="col-md-12" style="margin-top : 1%;">
+                                                            <div id="contenu" class="col-md-12" style="margin-top : 1%;">
                                                                 <div class="col-md-6">
                                                                     <a class="btn btn-primary btn-block" href="/arene/defi_valide/?id_defi={{defi.id}}" >
                                                                         Valider le défi
@@ -365,7 +371,7 @@
                                                                 <h3 id="afficherheure"></h3> 
                                                                 <small>restant pour accepter le défi!</small>
                                                             </div>
-                                                            <div class="col-md-5" style="padding : 2%">
+                                                            <div id="contenu" class="col-md-5" style="padding : 2%">
                                                                 <a href="/arene/defi_accepte/?id_defi={{defi.id}}" class="btn btn-primary btn-block">Accepter</a>
                                                                 <a href="/arene/defi_refuse/?id_defi={{defi.id}}" class="btn btn-danger btn-block">Refuser</a>
                                                             </div>
@@ -375,7 +381,7 @@
 
                                                     {% if defi.etat == "V" %}
                                                     <div class="col-md-12">
-                                                        <div cclass="row" style="text-align : center;">
+                                                        <div class="row" style="text-align : center;">
                                                             <div class="col-md-12" style="text-align : center">
                                                             <h3>Vous avez réussi votre défi. Bravo!</h3>
                                                             <a href="/arene/defi_user_cible/?id_user={{defi.defieur.id}}" type="button" class="btn btn-primary btn-xl">Défier @{{defi.defieur.username}} en retour</a>
@@ -483,7 +489,7 @@
                                                                 <h3 id="afficherheure"></h3>
                                                                 </small>restant pour réaliser le défi !</small>
                                                             </div>
-                                                            <div class="col-md-5" style="padding : 2%">
+                                                            <div id="contenu" class="col-md-5" style="padding : 2%">
                                                                 <p>
                                                                     <a class="btn btn-primary" data-toggle="collapse" href="#preuvearea" aria-expanded="false" aria-controls="preuvearea">
                                                                         J'ai réalisé le défi!
@@ -522,7 +528,7 @@
                                                     {% if defi.etat == "AV" %}
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
-                                                            <div class="col-md-12">
+                                                            <div id = "contenu" class="col-md-12">
                                                                 <h3>{{defi.defieur|title}} va bientôt valider (ou pas si vous avez triché) votre défi.</br> 
                                                                 <small>Il lui reste : <h3 id="afficherheure"></h3></small></h3>
                                                             </div>
@@ -619,9 +625,10 @@
     {% block javascript %}
 
         <script>
+            
             $(function($){
-                var date_butoire = new Date({{date_butoire.year}},({{date_butoire.month}}-1), {{date_butoire.day}}, {{date_butoire.hour}},{{date_butoire.minute}},{{date_butoire.second}});
-                
+                var date_butoire = new Date({% widthratio date_butoire|date:"U" 1 1000 %});
+
                 setDate();
 
                 function setDate(){
@@ -641,7 +648,17 @@
 
                     s = Math.floor(s);
 
-                    document.getElementById("afficherheure").innerHTML = d + "J " + h + "H "+ m + "M  "+s+ "s";
+                    if (d < 0) {
+
+                        document.getElementById("afficherheure").innerHTML =  "0J 0h 0m 0s";
+                        document.getElementById("contenu").innerHTML =  '<button type="button" class="btn btn-lg btn-danger" disabled="disabled">Défi Expiré!</button>';
+
+                    } else {
+                        
+                        document.getElementById("afficherheure").innerHTML = d + "J " + h + "h "+ m + "m  "+s+ "s";
+                        
+                    };
+
                     
                     setTimeout(setDate,500);
                 }

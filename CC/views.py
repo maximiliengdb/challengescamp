@@ -518,6 +518,8 @@ def user_map_error (request):
 
 
 def user_map_preload (request):
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
     
     return render(request, 'CC/user/compte/map_preload.html', locals())
 
@@ -549,7 +551,7 @@ def user_map_push_position(request, id_user, latitude, longitude):
     
     user.save()
     
-    return
+    return HttpResponse("OK")
 
 @login_required(login_url='connexion') 
 def user_map_tri(request):
@@ -988,7 +990,7 @@ def arene_defi_page (request, id_defi):
     if defi.date_execution :
         
         defi_date = defi.date_execution
-        temp = timedelta(days = 7)
+        temp = timedelta(days = 2)
         date_butoire = defi_date+temp
         
         try :
@@ -1010,14 +1012,16 @@ def arene_defi_page (request, id_defi):
     elif defi.date_acceptation :
         
         defi_date = defi.date_acceptation
-        temp = timedelta(days = 7)
+        nb_mins = defi.libelle.duree_execution
+        temp = timedelta(minutes = nb_mins)
         date_butoire = defi_date+temp
         
         
     else :
         
         defi_date = defi.date_envoie
-        temp = timedelta(days = 7)
+        nb_mins = defi.libelle.duree_acceptation
+        temp = timedelta(minutes = nb_mins)
         date_butoire = defi_date+temp
         
     
@@ -1341,15 +1345,30 @@ def arene_defi_expiration (request):
     defis_expiration = []
     
     for defi in defis :
-        if defi.etat == "EX" :
-            if defi.date_execution.replace(tzinfo=pytz.UTC) <= date_limite.replace(tzinfo=pytz.UTC) :
+        if defi.etat == "A" :
+            
+            nb_mins = defi.libelle.duree_execution
+            jour_verification = timedelta (minutes = nb_mins)
+            date_limite = defi.date_acceptation + jour_verification
+            
+            if maintenant.replace(tzinfo=pytz.UTC) >= date_limite.replace(tzinfo=pytz.UTC) :
                 defis_expiration.append(defi.id)
+                
         elif defi.etat == "AV" :
-            if defi.date_acceptation.replace(tzinfo=pytz.UTC) <= date_limite.replace(tzinfo=pytz.UTC) :
+            
+            jour_verification = timedelta (days = 2)
+            date_limite = defi.date_execution + jour_verification
+            
+            if maintenant.replace(tzinfo=pytz.UTC) >= date_limite.replace(tzinfo=pytz.UTC) :
                 defis_expiration.append(defi.id)
                 
         elif defi.etat == "E" : 
-            if defi.date_envoie.replace(tzinfo=pytz.UTC) <= date_limite.replace(tzinfo=pytz.UTC) :
+            
+            nb_mins = defi.libelle.duree_acceptation
+            jour_verification = timedelta (minutes = nb_mins)
+            date_limite = defi.date_envoie + jour_verification
+            
+            if maintenant.replace(tzinfo=pytz.UTC) >= date_limite.replace(tzinfo=pytz.UTC) :
                 defis_expiration.append(defi.id)
             
     if defis_expiration is not [] :
