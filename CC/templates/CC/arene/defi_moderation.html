@@ -1,0 +1,181 @@
+{% extends "CC/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+{% include "CC/naviguation.html" %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card">
+                        <div style="text-align : center;">
+                            <div class="row">
+                                <div class="col-xs-1" >
+                                </div>
+                                <div class="col-xs-4"  style=" margin-top : 35px;">
+                                    <img class="img-responsive img-circle center-block" src="{{defi.defieur.pp.image.url}}" style="max-height : 150px;">
+                                    <h3>{{defi.defieur.first_name|title}} {{defi.defieur.last_name|title}}</h3>
+                                </div>
+                                <div class="col-xs-2"  style=" margin-top : 65px;">
+                                    <h2>VS</h2>
+                                </div>
+                                <div class="col-xs-4"  style=" margin-top : 35px;">
+                                    <img class="img-responsive img-circle center-block" src="{{defi.challengeur.pp.image.url}}" style="max-height : 150px;">
+                                    <h3>{{defi.challengeur.first_name|title}} {{defi.challengeur.last_name|title}}</h3>
+                                </div>
+                                <div class="col-xs-1" >
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="content">
+                            <div class="card">
+                                    <div class="header">
+                                        <h4 class="title">{{defi.libelle.nom}} <small>({{defi.libelle.theme.nom}})</h4>
+                                        <p class="category">Envoyé le : {{defi.date_envoie}}</p>
+                                        <div id="jours"></div>
+                                        <div id="heures"></div>
+                                        <div id="minutes"></div>
+                                        <div id="secondes"></div>
+                                    </div>
+                                    <div class="content">
+                                        <div class="row">
+                                            <div class="col-md-12"> 
+                                                <h3 style="text-align : center">"{{defi.libelle.description}}"</h3>
+                                                {% if defi.enjeu_perso != "Sans Enjeu" %}
+                                                <h4 style="text-align : center"><i class="ti-bolt" style="color : #E65100;"></i>Le défi se pimente, {{defi.defieur.first_name|title}} {{defi.defieur.last_name}}   met en jeu : {{defi.enjeu_perso}}</h4>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="content">
+                                        <div class="row">
+                                            <div class="col-md-12"> 
+                                                 
+                                                    {% if defi.etat == "AV" %}
+                                                    <div id = "contenu" class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12" style="text-align : center;">
+                                                                
+                                                                <h4> Veuillez bien analyser le défi, une acceptation ou un refu abusif bloquerait votre compte pour une semaine voire définitivement pour réssidive.</h4>
+
+                                                            </div>
+                                                            
+                                                            {% for preuve in photos %}
+                                                            <div class="col-md-4">
+                                                                <img id="{{preuve.nom}}{{preuve.id}}"  src="{{preuve.fichier.url}}" style="margin : 3%" class="img-responsive">
+                                                            </div>
+
+                                                                <div id="myModal" class="modal">
+                                                                <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                                                                <img class="modal-content" id="img01">
+                                                                <div id="caption"></div>
+                                                                </div>
+                                                            
+                                                            {% endfor %}
+                                                            
+                                                            {% for preuve in videos %}
+                                                            <div class="col-md-4" >
+                                                                <div class="embed-responsive embed-responsive-16by9" style="margin : 3%;">
+                                                                    <video controls>
+                                                                        <source src="{{preuve.fichier.url}}" type="video/mp4">
+                                                                    </video>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
+                                                            
+                                                            <div id="contenu" class="col-md-12" style="margin-top : 1%;">
+                                                                <div class="col-md-6">
+                                                                    <a class="btn btn-primary btn-block" href="/arene/defi_valide/?id_defi={{defi.id}}" >
+                                                                        Valider le défi
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <a class="btn btn-danger btn-block" data-toggle="collapse" href="#contester" aria-expanded="false" aria-controls="contester">
+                                                                        Contester
+                                                                    </a>
+                                                                </div>
+
+                                                                <div class="collapse" id="contester" style="margin-top : 1%;">
+                                                                        <form method="post" action="/arene/defi_contestation">
+                                                                            {% csrf_token %}
+                                                                            <div class="form-group">
+                                                                                <input id="defi" name="defi" value="{{defi.id}}" hidden>
+                                                                                <label for="preuves">Attention si vous contestez sans motif ligitime vous pouvez voir votre compte suspendu et vos avantages perdus.</label>
+                                                                                
+                                                                                <div class="col-10">
+                                                                                    <input class="form-control" type="text" name="motif" id="motif" placeholder="Ecrire le motif ici">
+                                                                                </div>
+                                                                            </div>
+                                                                            <button type="submit" class="btn btn-danger">Contester</button>
+                                                                        </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    {% block javascript %}
+
+        <script>
+            
+            $('.nbre_notification').click(function () {
+                $.ajax({
+                url: '/compte/vue_notification/',
+                });
+                $("#notifications").load("/compte/vestiaire/ #notifications");
+                $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+            });
+            
+            $('div.block_notification').click(function () {
+                var id = $(this).attr('value');
+                $.ajax({
+                url: '/compte/active_notification/?notif_id='+id
+                });
+                alert(url);
+            });
+
+            {% for preuve in photos %}
+               
+            // Get the modal
+            var modal = document.getElementById('myModal');
+
+            // Get the image and insert it inside the modal - use its "alt" text as a caption
+            var img = document.getElementById('{{preuve.nom}}{{preuve.id}}');
+            var modalImg = document.getElementById("img01");
+            var captionText = document.getElementById("caption");
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.alt;
+            }
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() { 
+            modal.style.display = "none";
+            }
+
+            {% endfor %}
+
+        </script>
+
+    {% endblock %}
+
+{% endblock %}

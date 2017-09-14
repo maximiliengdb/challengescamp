@@ -478,11 +478,20 @@ def user_map (request):
     xplus = x + 0.12
     yplus = y + 0.09
     
-    raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?')[:2950]
+    raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?').exclude(sous_categorie = "rien")[:2950]
     nb_raws = len(raws)
     points = []
     
     for raw in raws :
+        sous_categorie = raw.sous_categorie
+        if sous_categorie == "rien" :
+            sous_categorie = 1
+            
+        if sous_categorie == "Vélo" :
+            sous_categorie = 1
+            
+        defi = Libelle_Defi.objects.filter(sous_theme = sous_categorie).order_by('?').exclude(active = False)[:1]
+        point = MapPoint(x = raw.x, y = raw.y, categorie = raw.categorie, defi = defi[0])
         points.append(raw)
         
     if nb_raws < 3000 :
@@ -495,7 +504,11 @@ def user_map (request):
         while (3000 - nb_raws) > 1 :
             x = random.uniform(xmoins, xplus)
             y = random.uniform(ymoins, yplus)
-            point = MapPoint(y = str(y), x = str(x) ,nom = "Point au hasard", id_osm = "XXXXXX", attribut = "Challenges.Camp point d'intéret")
+            sous_categorie = Sous_Theme.objects.all().order_by('?')[:1]
+            
+            defi = Libelle_Defi.objects.filter(sous_theme = sous_categorie).exclude(active = False).order_by('?')[:1]
+            
+            point = MapPoint(y = str(y), x = str(x) ,nom = "Point au hasard", id_osm = "XXXXXX", attribut = "Challenges.Camp point d'intéret", defi = defi[0])
             points.append(point)
             nb_raws = nb_raws + 1
         
@@ -561,10 +574,11 @@ def user_map_tri(request):
     message, type_message = message_alerte(request)
     nom_page = "Map"
     
-    points = MapPoint.objects.filter(attribut__contains = 'restaurant')
+    points = MapPoint.objects.filter(attribut__contains = 'bicycle_rental')
     
     for point in points :
-        point.categorie = "cuisine"
+        point.categorie = "Sport"
+        point.sous_categorie = "Vélo"
         point.save()
     
     return  render(request, 'CC/user/compte/map_tri.html', locals())
@@ -941,7 +955,7 @@ def arene_accueil (request):
     
     categories = Theme.objects.all()
     sous_categories = Sous_Theme.objects.all()
-    libelles = Libelle_Defi.objects.all()
+    libelles = Libelle_Defi.objects.all().exclude(active = False)
     
     return render(request, 'CC/arene/accueil.html', locals())
 
@@ -1041,6 +1055,93 @@ def arene_defi_page (request, id_defi):
     return render(request, 'CC/arene/defi.html', locals())
 
 @login_required(login_url='connexion')
+def arene_defi_page_moderation (request):
+    
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
+    message, type_message = message_alerte(request)
+    nom_page = "Arene"
+    
+    teamcc = Utilisateur.objects.get(username = "@teamcc")
+    prive = False
+    
+    defi = Defi.objects.filter(defieur=teamcc, etat="AV", prive = prive).order_by('-date_execution').exclude(challengeur = utilisateur)[:1]
+    
+    if len(defi) == 0  :
+        return redirect(arene_defi_page_moderation_vide)
+    
+    defi = defi[0]
+    photos = []
+    videos = []
+    visiteur = False
+        
+    for preuve in defi.preuve.all():
+        
+        ref_file= preuve.fichier.url
+        extension=ref_file.split('.')[-1]
+        
+        if extension == "mp4" or extension == "MP4" :
+            videos.append(preuve)
+        else :
+            photos.append(preuve)
+           
+           
+    return render(request, 'CC/arene/defi_moderation.html', locals())
+
+@login_required(login_url='connexion')
+def arene_defi_page_moderation_vide (request):
+    
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
+    message, type_message = message_alerte(request)
+    nom_page = "Mes Défis"
+    
+    
+    teamcc = Utilisateur.objects.get(username = "@teamcc")
+    prive = False
+    defi = Defi.objects.filter(defieur = teamcc, etat="AV", prive = prive).order_by('-date_execution')[:1]
+    nb = len(defi)
+           
+    return render(request, 'CC/arene/defi_moderation_vide.html', locals())
+
+def arene_defi_map (request, id_defi):
+    
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    
+    id_defi = int(request.GET['id_defi'])
+    libelle_defi = Libelle_Defi.objects.get(id=id_defi)
+    
+    eclairs = utilisateur.eclairs
+    
+    if eclairs < 1 :
+        request.session['message'] = "Vous n'avez plus d'éclair pour vous challengez vous-même, modérez des défis, achetez des éclairs ou attendez demain pour pouvoir recommencer à vous défier vous-même."
+        request.session['type_message'] = "alert-danger"
+        return redirect(user_dashboard)
+    
+    else :
+        aujourdhui = datetime.now()
+        teamCC = Utilisateur.objects.get(username = "@teamcc")
+        prive = False
+        
+        
+        defi = Defi(libelle=libelle_defi, prive=prive, etat="A", challengeur=utilisateur, enjeu_perso = "Sans Enjeu", defieur=teamCC, date_envoie = aujourdhui, date_acceptation = aujourdhui)
+        defi.save()
+        
+        utilisateur.eclairs = utilisateur.eclairs - 1
+        utilisateur.save()
+        
+        lien = "/arene/defi/?id_defi="+ str(defi.id)
+        
+        request.session['message'] = "Vous venez de vous défier : " + defi.libelle.nom
+        request.session['type_message'] = "alert-success"
+        
+    return redirect(lien)
+
+
+@login_required(login_url='connexion')
 def arene_defi_lance (request):
     
     identifiant_utilisateur = request.user.id
@@ -1094,7 +1195,6 @@ def arene_defi_lance (request):
         pass
     
     defi = Defi(libelle=defi, prive=prive, etat="E", defieur=utilisateur, enjeu_perso = enjeu, challengeur=ami, date_envoie = date)
-    
     defi.save()
     
     message = "Vous avez été défié par " + utilisateur.username + " : " + defi.libelle.nom[:22] + "..."
@@ -1215,11 +1315,10 @@ def arene_defi_valide (request, id_defi):
     
     defi.etat = "V"
     defi.date_validation = datetime.now()
-    
     defi.save()
     
     lien = "/arene/defi/?id_defi="+ str(defi.id)
-    message = str(utilisateur.username) + " a validé votre défi"
+    message = str(defi.defieur.username) + " a validé votre défi"
     notification = Notification (lien = lien, type='D', message=message, recepteur=defi.challengeur, auteur=utilisateur, date = datetime.now())
     notification.save()  
    
@@ -1229,35 +1328,14 @@ def arene_defi_valide (request, id_defi):
         lien = "/arene/defi/?id_defi="+str(defi.id)
         actu = Actualite(message = message, nom = "Defi", personne_concernee =  defi.challengeur, lien = lien)
         actu.save()
+        
+    teamcc = Utilisateur.objects.get(username = "@teamcc")
     
-       
-    if Quete.objects.filter(challengeur = defi.challengeur, active = True) :
-        quete = Quete.objects.get(challengeur = defi.challengeur, active = True)
-        quete_defis = quete.libelle.defis.all()
+    if defi.defieur == teamcc :
+        utilisateur.eclairs = utilisateur.eclairs +1
+        utilisateur.save()
+        return redirect(user_dashboard)
         
-        les_defis_quete = []
-        for libelle in quete_defis :
-            les_defis_quete.append(libelle.id)
-        
-        if defi.libelle.id in les_defis_quete :
-            date = quete.date_debut
-            les_defis = Defi.objects.filter(challengeur = defi.challengeur, etat = "V", date_validation__gte = date)
-        
-            mes_success = []
-            
-            for defi in les_defis :
-                mes_success.append(defi.libelle.id)
-            
-            for id in mes_success :
-                try : 
-                    les_defis_quete.remove(id)
-                except :
-                    pass
-                
-            if les_defis_quete == [] :
-                quete_validation(request, quete.id)
-                
-            
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
 @login_required(login_url='connexion')
@@ -1295,9 +1373,16 @@ def arene_defi_conteste (request):
     defi.save()
     
     lien = "/arene/defi/?id_defi="+ str(defi.id)
-    message = str(utilisateur.username) + " a contesté votre défi, venez voir pourquoi."
+    message = str(defi.defieur.username) + " a contesté votre défi, venez voir pourquoi."
     notification = Notification (lien = lien, type='D', message=message, recepteur=defi.challengeur, auteur=utilisateur, date = datetime.now())
-    notification.save()  
+    notification.save()
+    
+    teamcc = Utilisateur.objects.get(username = "@teamcc")
+    
+    if defi.defieur == teamcc :
+        utilisateur.eclairs = utilisateur.eclairs +1
+        utilisateur.save()  
+        return redirect(user_dashboard)
     
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
@@ -1339,9 +1424,10 @@ def arene_defi_expiration (request):
     jour_verification = timedelta (days = -7)
     date_limite = maintenant + jour_verification
  
+    teamcc = Utilisateur.objects.get(username = "@teamcc")
     
     #Test des défis envoyé
-    defis = Defi.objects.filter(expire = False)
+    defis = Defi.objects.filter(expire = False).exclude(defieur = teamcc)
     defis_expiration = []
     
     for defi in defis :
@@ -1404,200 +1490,7 @@ def arene_expiration_challengeur (request, id_defi):
         notification.save() 
         
     return
-    
-def quete_accueil (request):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
-    message, type_message = message_alerte(request)
-    nom_page = "Ma Quête"
-    
-    try :
-        ma_quete = Quete.objects.filter(challengeur = utilisateur, active = True)
-    except :
-        pass
-    
-    if ma_quete : 
-        return redirect(quete_ma_quete)
-    
-    libelles = Libelle_Quete.objects.all()
-    categories = Theme.objects.all()
-    
-    return render(request, 'CC/quete/accueil.html', locals())
 
-def quete_ma_quete (request):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
-    message, type_message = message_alerte(request)
-    nom_page = "Ma Quête"
-    
-    quete = False
-    
-    try : 
-        ma_quete = Quete.objects.get(challengeur = utilisateur, active = True)
-        quete = True
-    except :
-        pass
-    
-    if quete == True :
-        date = ma_quete.date_debut
-        mes_defis = Defi.objects.filter(challengeur = utilisateur, etat = "V", date_validation__gte = date)
-        mes_libelles = []
-        
-        try : 
-            for defi in mes_defis :
-                mes_libelles.append(defi.libelle.id)
-                
-        except : 
-            mes_libelle = []
-            pass
-        
-        mes_success = []
-        for defi in ma_quete.libelle.defis.all() :
-            if defi.id in mes_libelles :
-                mes_success.append(defi.id)
-        return render(request, 'CC/quete/ma_quete.html', locals())
-    
-    else : 
-        return redirect(quete_accueil)
-    
-def quete_ma_quete_archive (request, id_quete):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
-    message, type_message = message_alerte(request)
-    nom_page = "Ma Quête"
-    
-    id_quete = request.GET['id_quete']
-    
-    try :
-        ma_quete = Quete.objects.get(id = id_quete, challengeur = utilisateur)
-        
-    except : 
-        return redirect(quete_ma_quete)
-   
-    return render(request, 'CC/quete/ma_quete_archive.html', locals())
-    
-
-def quete_accepter_quete (request):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    
-    if request.method == 'POST': 
-        test = False
-        try :
-            quete = Quete.objects.get(challengeur = utilisateur, active = True)
-            test = True
-        except :
-            pass
-        
-        if test == True :
-                request.session['message'] = "Vous avez déjà une quête en cours!"
-                request.session['type_message'] = "alert-danger"
-                return redirect(quete_ma_quete)
-        
-        id_quete = request.POST['id_quete']
-        
-        prive = False
-        try :
-            prive = request.POST['prive']
-        except :
-            pass
-        
-        libelle = Libelle_Quete.objects.get(id = id_quete)
-        date_fin = datetime.now() + timedelta(days = libelle.duree)
-        
-        ma_quete = Quete(libelle = libelle, challengeur = utilisateur, prive = prive, etat = "D", date_fin = date_fin)
-        ma_quete.save()
-        
-        if prive == False :
-            message = str (utilisateur.username) +" s'est enrollé dans une quête épique : "+ str(ma_quete.libelle.objectif)
-            lien = "/compte/profil_public/?profil="+str(utilisateur.id)
-            actu = Actualite(message = message, nom = "Quête", personne_concernee = utilisateur, lien = lien)
-            actu.save()
-        return redirect(quete_ma_quete)
-    
-    return redirect(quete_accueil)
-
-def quete_abandonner_quete (request):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    test= False
-    
-    try : 
-        quete = Quete.objects.get(challengeur = utilisateur, active = True)
-        test = True
-    except :
-        pass
-    
-    if test == True :
-        quete.active = False
-        quete.save()
-    
-    return redirect(quete_accueil)
-
-def quete_validation (request, id_quete):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-   
-    quete = Quete.objects.get(id = id_quete, etat= "D")
-    
-    quete.etat = "V"
-    quete.active = False
-    quete.date_fin = datetime.now()
-    
-    lien = "/quete/ma_quete_archive/?id_quete="+ quete.id
-    message = "Vous avez réussi votre quête!"
-    team_CC = Utilisateur.objects.get(username = "@teamcc")
-    notification = Notification (lien = lien, type='Q', message=message, recepteur=quete.challengeur, auteur=team_CC, date = datetime.now())
-    notification.save()  
-   
-    if quete.prive == False :
-        
-        message = str (quete.challengeur.username) +" a fini sa quête : "+ str(quete.libelle.objectif)
-        actu = Actualite(message = message, nom = "Quête", personne_concernee =  quete.challengeur)
-        actu.save()
-    
-    quete.save()
-    
-    return
-
-def quete_libelle_quete (request, id_quete):
-    
-    identifiant_utilisateur = request.user.id
-    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
-    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
-    message, type_message = message_alerte(request)
-    nom_page = "Ma Quête"
-    
-    id_quete = request.GET['id_quete']
-    
-    quete = Libelle_Quete.objects.get(id = id_quete)
-    
-    return render(request, 'CC/quete/quete.html', locals())
-
-def admin_control_triche_ami (request):
-    
-    defis = Defi.objects.filter(warning_triche = False, warning_analyse = False, etat = "V")
-    liste_warning = []
-    
-    temps_ecart_acceptable = timedelta(days = 1)
-    
-    for defi in defis :
-        if (defi.date_execution - defi.date_validation) < temps_ecart_acceptable :
-            defi.warning_triche = True
-            defi.save()
-        defi.warning_analyse = True
-    
-    
-    return
 
 def email_inscription (request, utilisateur):
     

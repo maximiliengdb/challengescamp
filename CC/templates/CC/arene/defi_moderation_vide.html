@@ -1,0 +1,42 @@
+{% extends "CC/base.html" %}
+{% block content %}
+{% load staticfiles %}
+
+{% include "CC/naviguation.html" %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                
+                    <h2 style="text-align : center;">Il n'y a pas de défi à moderer pour le moment  </h2>
+                
+            </div>
+        </div>
+    </div>
+
+    {% block javascript %}
+
+        <script>
+            
+           
+            $('.nbre_notification').click(function () {
+                $.ajax({
+                url: '/compte/vue_notification/',
+                });
+                $("#notifications").load("/compte/vestiaire/ #notifications");
+                $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+            });
+            
+            $('div.block_notification').click(function () {
+                var id = $(this).attr('value');
+                $.ajax({
+                url: '/compte/active_notification/?notif_id='+id
+                });
+                alert(url);
+            });
+
+        </script>
+
+    {% endblock %}
+
+{% endblock %}

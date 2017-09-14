@@ -20,6 +20,8 @@ class Nationalite(models.Model):
 
 class Utilisateur(User):
     
+    eclairs = models.IntegerField(default = 20)
+    
     position = models.BooleanField(default = False)
     derniere_connexion = models.DateTimeField(auto_now=False, default = now)
     latitude = models.CharField(max_length = 255, default= "0")
@@ -160,25 +162,11 @@ class Sous_Theme(models.Model):
     theme = models.ForeignKey(Theme)
     def __str__(self):
         return self.nom
-
-
-class MapPoint(models.Model):
-    
-    x = models.CharField(max_length=255, default="rien")
-    y = models.CharField(max_length=255, default="rien")
-    id_osm = models.CharField(max_length=255, default="rien")
-    nom = models.CharField(max_length=255, default="rien")
-    attribut = models.CharField(max_length=855, default="rien")
-    
-    categorie = models.CharField(max_length = 255, default="rien")
-    sous_categorie = models.CharField(max_length = 255, default="rien")
-    
-    def __str__(self):
-        return self.id_osm
-        
         
         
 class Libelle_Defi (models.Model):
+    
+    active = models.BooleanField(default = False)
     
     nom = models.CharField(max_length = 255, default="Sans Titre")
     description = models.CharField(max_length = 5000, default="Sans Description")
@@ -195,46 +183,23 @@ class Libelle_Defi (models.Model):
     def __str__(self):
         return self.nom
     
-class Libelle_Quete (models.Model):
     
-    theme = models.ForeignKey(Theme, default = 1)
+class MapPoint(models.Model):
     
-    objectif = models.CharField(max_length = 255, default="Sans Titre")
-    description = models.CharField(max_length = 5000, default="Sans Description")
-    recompense = models.ForeignKey(Recompense)
+    x = models.CharField(max_length=255, default="rien")
+    y = models.CharField(max_length=255, default="rien")
+    id_osm = models.CharField(max_length=255, default="rien")
+    nom = models.CharField(max_length=255, default="rien")
+    attribut = models.CharField(max_length=855, default="rien")
     
-    defis = models.ManyToManyField(Libelle_Defi)
-    duree = models.IntegerField(default = 7)
-    auteur = models.ForeignKey(Utilisateur)
-     
-    def __str__(self):
-        return self.objectif
+    categorie = models.CharField(max_length = 255, default="rien")
+    sous_categorie = models.CharField(max_length = 255, default="rien")
     
-class Quete(models.Model):
-    
-    libelle = models.ForeignKey(Libelle_Quete)
-    challengeur = models.ForeignKey(Utilisateur)
-    
-    prive = models.BooleanField(default = False)
-    
-    active = models.BooleanField(default = True)
-    
-    ETAT = (
-        ('D', 'Default'),
-        ('V', 'Validé'),
-        ('S', 'Signalé'),
-    )
-    
-    etat = models.CharField(max_length=2, choices=ETAT, default='D')
-    
-    date_debut = models.DateTimeField(auto_now=False, default = now)
-    date_fin = models.DateTimeField(null = True)
-    
-    expire = models.BooleanField(default = False)
+    defi = models.ForeignKey(Libelle_Defi, default = 1)
     
     def __str__(self):
-        return self.libelle.objectif
-    
+        return self.id_osm
+
 class Defi(models.Model):
     
     libelle = models.ForeignKey(Libelle_Defi)

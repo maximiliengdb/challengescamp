@@ -30,6 +30,8 @@ urlpatterns = [
     url(r'^user_position/(?P<id_user>)$' , views.user_map_track_user, name='Map'),
     url(r'^user_position_me/(?P<id_user>)$' , views.user_map_track_me, name='Map'),
     
+    url(r'^compte/map/defi/(?P<id_defi>)$', views.arene_defi_map, name='Map'),
+    
     url(r'^compte/profil_prive/', views.user_profil_prive, name='Profile'),
     url(r'^compte/profil_public/(?P<profil>)$', views.user_profil_public, name='Proposition Defi'),
     url(r'^compte/mes_amis', views.user_amis, name='Amis Page'),
@@ -52,13 +54,6 @@ urlpatterns = [
     
     url(r'^compte/proposition_defi$', views.user_proposition_defi, name='Proposition Defi'),
     
-    url(r'^quete/accueil$', views.quete_accueil, name='Quete'),
-    url(r'^quete/quete/(?P<id_quete>)$' , views.quete_libelle_quete, name='Quete'),
-    url(r'^quete/accepter_quete/$' , views.quete_accepter_quete, name='Quete'),
-    url(r'^quete/abandonner_quete/$' , views.quete_abandonner_quete, name='Quete'),
-    url(r'^quete/ma_quete$' , views.quete_ma_quete, name='Quete'),
-    url(r'^quete/ma_quete_archive/(?P<id_quete>)$' , views.quete_ma_quete_archive, name='Quete'),
-    
     url(r'^arene/accueil$', views.arene_accueil, name='Arene'),
     url(r'^arene/defi_lance$' , views.arene_defi_lance, name='Arene'),
     url(r'^arene/defi_page/(?P<id_defi>)$' , views.arene_accueil_defi, name='Arene'),
@@ -70,5 +65,8 @@ urlpatterns = [
     url(r'^arene/defi_preuve$' , views.arene_defi_preuve, name='Arene'),
     url(r'^arene/defi_contestation$' , views.arene_defi_conteste, name='Arene'),
     url(r'^arene/defi_signalement$' , views.arene_defi_signale, name='Arene'),
+    
+    url(r'^arene/defi_moderation$' , views.arene_defi_page_moderation, name='Arene'),
+    url(r'^arene/defi_moderation_vide$' , views.arene_defi_page_moderation_vide, name='Arene'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

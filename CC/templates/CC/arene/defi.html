@@ -529,13 +529,17 @@
                                                     <div class="col-md-12">
                                                         <div class="row" style="text-align : center;">
                                                             <div id = "contenu" class="col-md-12">
+                                                                {% if defi.defieur.username == "@teamcc" %}
+                                                                <h3>{{defi.defieur|title}} va bientôt valider (ou pas si vous avez triché) votre défi.</br> 
+                                                                {% else %}
                                                                 <h3>{{defi.defieur|title}} va bientôt valider (ou pas si vous avez triché) votre défi.</br> 
                                                                 <small>Il lui reste : <h3 id="afficherheure"></h3></small></h3>
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                         <hr>
                                                         
-                                                        <h4 style="text-align : center;">Voici les preuves</h4>
+                                                        <h4 style="text-align : center;">Voici vos preuves</h4>
 
                                                             {% for preuve in photos %}
                                                             <div class="col-md-4">

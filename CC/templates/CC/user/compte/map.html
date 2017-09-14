@@ -29,7 +29,7 @@
                     </div>
                     <br/>
                     <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-
+                    <div style="margin-bottom : 20px; "></br></div>
              </div>
         </div>
 
@@ -90,7 +90,7 @@
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "description": "{{point.attribut}}",
+                                    "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
                                 },
                                 "geometry": {
                                     "type": "Point",
@@ -197,6 +197,7 @@
 
             $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
             });
+            utilisateur_position = '/user_position_me/?id_user={{utilisateur.id}}';
             map.getSource('test').setData(utilisateur_position);
 
         }, 1000);

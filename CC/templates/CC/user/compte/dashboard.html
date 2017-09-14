@@ -23,13 +23,28 @@
                             <div class="card">
                                 <div class="header">
                                     <div class="row">
-                                        <div class="col-sm-3">
-                                                <img class="img-responsive img-circle center-block" src="{{utilisateur.pp.image.url}}" style="max-height : 65px;">
+                                        <div class="col-sm-3 hidden-xs">
+                                            <img class="img-responsive img-circle center-block" src="{{utilisateur.pp.image.url}}" style="max-height : 65px;">
                                         </div>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-7  hidden-xs">
                                             <h4 class="title">{{utilisateur.first_name|title}} {{utilisateur.last_name|title}}</h4>
                                             <p class="category">Pas de team</p>
                                             <p class="category"><a href="/compte/profil_prive/?profil={{utilisateur.id}}" >Voir Profil</a></p>
+                                        </div>
+                                        <div class="col-sm-2  hidden-xs">
+                                            <h4 class="title">{{utilisateur.score_absolu}} pts</h4>
+                                            <p class="category" style="color : #E65100">{{utilisateur.eclairs}} éclairs</p>
+                                            <p class="category" style="font-size : 9px;"><small>Acheter des éclairs</small></p>
+                                        </div>
+                                        <div class="col-xs-8  hidden-md hidden-sm hidden-lg">
+                                            <h4 class="title">{{utilisateur.first_name|title}} {{utilisateur.last_name|title}}</h4>
+                                            <p class="category">Pas de team</p>
+                                            <p class="category"><a href="/compte/profil_prive/?profil={{utilisateur.id}}" >Voir Profil</a></p>
+                                        </div>
+                                        <div class="col-xs-4  hidden-md hidden-sm hidden-lg">
+                                            <h4 class="title">{{utilisateur.score_absolu}} pts</h4>
+                                            <p class="category" style="color : #E65100">{{utilisateur.eclairs}} éclairs</p>
+                                            <p class="category" style="font-size : 9px;"><small>Acheter des éclairs</small></p>
                                         </div>
                                     </div>
                                 </div>
@@ -37,6 +52,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-xs-12">
+                                <div class="card">
+                                    <div class="header">
+                                        <div>
+                                            <h4 class="title">Moderer des défis pour gagner des éclairs!</h4>
+                                            <p class="category">Un défi modérer = 1 éclair gagné!</p>
+                                            <p class="category" style="margin-top : 2%"><a type="button" class="btn btn-xs btn-primary btn-block" href="/arene/defi_moderation" >Modérer</a></p>
+                                        
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                    
 
