@@ -478,7 +478,7 @@ def user_map (request):
     xplus = x + 0.12
     yplus = y + 0.09
     
-    raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?').exclude(sous_categorie = "rien")[:2950]
+    raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?').exclude(sous_categorie = "rien")[:2650]
     nb_raws = len(raws)
     points = []
     
@@ -494,7 +494,7 @@ def user_map (request):
         point = MapPoint(x = raw.x, y = raw.y, categorie = raw.categorie, defi = defi[0])
         points.append(raw)
         
-    if nb_raws < 3000 :
+    if nb_raws < 2700 :
         
         xmoins = x - 0.02
         ymoins = y - 0.009

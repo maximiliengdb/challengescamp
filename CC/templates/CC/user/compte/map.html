@@ -29,7 +29,7 @@
                     </div>
                     <br/>
                     <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-                    <div style="margin-bottom : 20px; "></br></div>
+
              </div>
         </div>
 
@@ -47,10 +47,12 @@
     function success(pos) {
     var crd = pos.coords;
 
+    console.log(crd);
+
     var map = new mapboxgl.Map({
     container: 'map',
     style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
-    center: [crd.longitude, crd.latitude],
+    center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
     zoom: 17,
     });
 
@@ -66,7 +68,7 @@
     window.setInterval(function() {
         $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
         });
-    }, 3000);
+    }, 5000);
 
     map.addControl(new mapboxgl.NavigationControl());
     
@@ -195,12 +197,9 @@
 
         window.setInterval(function() {
 
-            $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-            });
-            utilisateur_position = '/user_position_me/?id_user={{utilisateur.id}}';
             map.getSource('test').setData(utilisateur_position);
 
-        }, 1000);
+        }, 5000);
 
         map.addSource('test', { type: 'geojson', data: utilisateur_position });
         map.addLayer({
@@ -244,7 +243,7 @@
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
 
-    navigator.geolocation.getCurrentPosition(success, error, options);
+    id = navigator.geolocation.watchPosition(success, error, options);
     
     $('.nbre_notification').click(function () {
             $.ajax({
