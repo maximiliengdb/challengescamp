@@ -24,7 +24,7 @@
                         }
                     </style>
                    
-                    <div id='map' style='width: auto; height: 550px;'>
+                    <div id='map' data-tap-disabled="true" style='width: auto; height: 550px;'>
                     
                     </div>
                     <br/>
@@ -123,7 +123,7 @@
                 map.on('click', 'challenges', function (e) {
                     
                     if (((e.features[0].geometry.coordinates[0] > (crd.longitude - 0.002)) && (e.features[0].geometry.coordinates[0] < (crd.longitude + 0.002))) && ((e.features[0].geometry.coordinates[1] > (crd.latitude - 0.002)) && (e.features[0].geometry.coordinates[1] < (crd.latitude + 0.002))) ) {
-                   
+                        
                         new mapboxgl.Popup()
                         .setLngLat(e.features[0].geometry.coordinates)
                         .setHTML(e.features[0].properties.description)
@@ -220,26 +220,26 @@
                                 }
                             });
         
-                            // When a click event occurs on a feature in the places layer, open a popup at the
-                            // location of the feature, with description HTML from its properties.
-                            map.on('click', '{{user.id}}', function (e) {
-                                new mapboxgl.Popup()
-                                    .setLngLat(e.features[0].geometry.coordinates)
-                                    .setHTML(e.features[0].properties.description)
-                                    .addTo(map);
-                            });
-        
-                            // Change the cursor to a pointer when the mouse is over the places layer.
-                            map.on('mouseenter', '{{user.id}}', function () {
-                                map.getCanvas().style.cursor = 'pointer';
-                            });
-        
-                            // Change it back to a pointer when it leaves.
-                            map.on('mouseleave', '{{user.id}}', function () {
-                                map.getCanvas().style.cursor = '';
-                            });
-                        });  
-                }); 
+                    // When a click event occurs on a feature in the places layer, open a popup at the
+                    // location of the feature, with description HTML from its properties.
+                    map.on('click', '{{user.id}}', function (e) {
+                        new mapboxgl.Popup()
+                            .setLngLat(e.features[0].geometry.coordinates)
+                            .setHTML(e.features[0].properties.description)
+                            .addTo(map);
+                    });
+
+                    // Change the cursor to a pointer when the mouse is over the places layer.
+                    map.on('mouseenter', '{{user.id}}', function () {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+
+                    // Change it back to a pointer when it leaves.
+                    map.on('mouseleave', '{{user.id}}', function () {
+                        map.getCanvas().style.cursor = '';
+                    });
+                });  
+            }); 
     };
 
     map(crd);
