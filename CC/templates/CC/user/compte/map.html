@@ -23,10 +23,15 @@
                             background: #ee8a65;
                         }
                     </style>
-
+                   
                     <div id='map' style='width: auto; height: 550px;'>
-                    </div>
                     
+                    </div>
+                    <br/>
+                    <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
+                    <div>
+                    </br>
+                    </div>    
              </div>
         </div>
 
@@ -64,6 +69,13 @@
             zoom: 17,
             });
         
+            document.getElementById('fly').addEventListener('click', function () {
+
+                map.flyTo({
+                    center: [crd.longitude, crd.latitude],
+                    zoom: 17,
+                });
+            });
 
             map.addControl(new mapboxgl.NavigationControl());
             
@@ -107,15 +119,39 @@
                         }
                     });
                 });
-        
+
                 map.on('click', 'challenges', function (e) {
+
+                    function distance(lat1, lon1, lat2, lon2, unit) {
+                        var radlat1 = Math.PI * lat1/180
+                        var radlat2 = Math.PI * lat2/180
+                        var theta = lon1-lon2
+                        var radtheta = Math.PI * theta/180
+                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                        dist = Math.acos(dist)
+                        dist = dist * 180/Math.PI
+                        dist = dist * 60 * 1.1515
+                        if (unit=="K") { dist = dist * 1.609344 }
+                        if (unit=="N") { dist = dist * 0.8684 }
+                        return dist
+                    };
+
+                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], crd.latitude, crd.longitude, "K");
                     
+                    if (result < 0.07) {
+                        new mapboxgl.Popup()
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML(e.features[0].properties.description)
+                        .addTo(map);
+        
+                    } else {
         
                         new mapboxgl.Popup()
                         .setLngLat(e.features[0].geometry.coordinates)
                         .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
                         .addTo(map);
         
+                    };
                 });
             
                 map.on('mouseenter', 'challenges', function () {
