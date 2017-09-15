@@ -52,12 +52,10 @@
 
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
+    document.location.href="/compte/map_error";
     };
 
-    navigator.geolocation.watchPosition(success, error, options);
-
-    alert(crd.pos);
-
+    id = navigator.geolocation.watchPosition(success, error, options);
 
     function map(crd){
 
