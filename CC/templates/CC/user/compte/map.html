@@ -49,17 +49,15 @@
 
     function success(pos) {
     crd = pos.coords;
-    window.setInterval(function() {
-        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-        });
-    }, 5000);
+    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+            });
 
     };
 
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
-
+    
     id = navigator.geolocation.watchPosition(success, error, options);
 
     function map(crd){
