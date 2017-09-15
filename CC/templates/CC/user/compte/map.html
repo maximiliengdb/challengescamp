@@ -24,12 +24,9 @@
                         }
                     </style>
 
-                    <div data-tap-disabled="true">
                     <div id='map' style='width: auto; height: 550px;'>
                     </div>
                     
-                    </div>
-                      
              </div>
         </div>
 
@@ -67,13 +64,6 @@
             zoom: 17,
             });
         
-            document.getElementById('fly').addEventListener('click', function () {
-
-                map.flyTo({
-                    center: [crd.longitude, crd.latitude],
-                    zoom: 17,
-                });
-            });
 
             map.addControl(new mapboxgl.NavigationControl());
             
