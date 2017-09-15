@@ -43,206 +43,214 @@
     maximumAge: 0
     };
 
+    var crd
 
     function success(pos) {
-    var crd = pos.coords;
+    crd = pos.coords;
 
-    console.log(crd);
-
-    var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
-    center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
-    zoom: 17,
-    });
-
-    document.getElementById('fly').addEventListener('click', function () {
-        // Fly to a random location by offsetting the point -74.50, 40
-        // by up to 5 degrees.
-        map.flyTo({
-            center: [crd.longitude, crd.latitude],
-            zoom: 17,
-        });
-    });
-
-    window.setInterval(function() {
-        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-        });
-    }, 5000);
-
-    map.addControl(new mapboxgl.NavigationControl());
-    
-    map.on('load', function () {
-
-        map.loadImage('{{icone_sport.image.url}}', function(error, image) {
-            if (error) throw error;
-            map.addImage('icone-sport', image);
-
-            map.addLayer({
-                "id": "challenges",
-                "type": "symbol",
-                "source": {
-                    "type": "geojson",
-                    "data": {
-                        "type": "FeatureCollection",
-                        "features": [
-
-                        {% for point in points %}
-
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [{{point.x}}, {{point.y}}]
-                                }
-                            },
-
-                        {% endfor %}
-
-                        ]
-                    }
-                },
-                "layout": {
-                    "icon-image": "icone-sport",
-                    "icon-size": 0.45,
-                    "icon-allow-overlap": true
-                }
-            });
-        });
-
-        map.on('click', 'challenges', function (e) {
-            
-            if (((e.features[0].geometry.coordinates[0] > (crd.longitude - 0.002)) && (e.features[0].geometry.coordinates[0] < (crd.longitude + 0.002))) && ((e.features[0].geometry.coordinates[1] > (crd.latitude - 0.002)) && (e.features[0].geometry.coordinates[1] < (crd.latitude + 0.002))) ) {
-           
-                new mapboxgl.Popup()
-                .setLngLat(e.features[0].geometry.coordinates)
-                .setHTML(e.features[0].properties.description)
-                .addTo(map);
-
-            } else {
-
-                new mapboxgl.Popup()
-                .setLngLat(e.features[0].geometry.coordinates)
-                .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                .addTo(map);
-
-            };
-        });
-    
-        map.on('mouseenter', 'challenges', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-    
-        map.on('mouseleave', 'challenges', function () {
-            map.getCanvas().style.cursor = '';
-        });
-  
-    
-    {% for user in users %}
-    map.loadImage('{{user.pp.image.url}}', function(error, image) {
-        if (error) throw error;
-        map.addImage('{{user.username}}', image);
-        
-        {{user.username}} = '/user_position/?id_user={{user.id}}';
-
-        window.setInterval(function() {
-
-            map.getSource('{{user.id}}').setData({{user.username}});
-
-        }, 8000);
-
-        map.addSource('{{user.id}}', { type: 'geojson', data: {{user.username}} });
-        map.addLayer({
-                        "id": "{{user.id}}",
-                        "type": "symbol",
-                        "source": '{{user.id}}',
-                        "layout": {
-                            "icon-image": "{{user.username}}",
-                            "icon-size": 0.15,
-                            "icon-allow-overlap": true
-                        }
-                    });
-
-        // When a click event occurs on a feature in the places layer, open a popup at the
-        // location of the feature, with description HTML from its properties.
-        map.on('click', '{{user.id}}', function (e) {
-            new mapboxgl.Popup()
-                .setLngLat(e.features[0].geometry.coordinates)
-                .setHTML(e.features[0].properties.description)
-                .addTo(map);
-        });
-
-        // Change the cursor to a pointer when the mouse is over the places layer.
-        map.on('mouseenter', '{{user.id}}', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-
-        // Change it back to a pointer when it leaves.
-        map.on('mouseleave', '{{user.id}}', function () {
-            map.getCanvas().style.cursor = '';
-        });
-    });
-
-    {% endfor %}
-    
-        map.loadImage('{{utilisateur.pp.image.url}}', function(error, image) {
-        
-        if (error) throw error;
-        map.addImage('utilisateur', image);
-
-        utilisateur_position = '/user_position_me/?id_user={{utilisateur.id}}';
-
-        window.setInterval(function() {
-
-            map.getSource('test').setData(utilisateur_position);
-
-        }, 5000);
-
-        map.addSource('test', { type: 'geojson', data: utilisateur_position });
-        map.addLayer({
-                        "id": "{{utilisateur.id}}",
-                        "type": "symbol",
-                        "source": "test" ,
-                        "layout": {
-                            "icon-image": "utilisateur",
-                            "icon-size": 0.2,
-                            "icon-allow-overlap": true
-                        }
-                    });
-
-                    // When a click event occurs on a feature in the places layer, open a popup at the
-                    // location of the feature, with description HTML from its properties.
-                    map.on('click', '{{user.id}}', function (e) {
-                        new mapboxgl.Popup()
-                            .setLngLat(e.features[0].geometry.coordinates)
-                            .setHTML(e.features[0].properties.description)
-                            .addTo(map);
-                    });
-
-                    // Change the cursor to a pointer when the mouse is over the places layer.
-                    map.on('mouseenter', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = 'pointer';
-                    });
-
-                    // Change it back to a pointer when it leaves.
-                    map.on('mouseleave', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = '';
-                    });
-                });  
-
-       
-
-        }); 
     };
 
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
 
-    id = navigator.geolocation.watchPosition(success, error, options);
+    navigator.geolocation.watchPosition(success, error, options);
+
+    alert(crd.pos);
+
+
+    function map(crd){
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
+            center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
+            zoom: 17,
+            });
+        
+            document.getElementById('fly').addEventListener('click', function () {
+                // Fly to a random location by offsetting the point -74.50, 40
+                // by up to 5 degrees.
+                map.flyTo({
+                    center: [crd.longitude, crd.latitude],
+                    zoom: 17,
+                });
+            });
+        
+            window.setInterval(function() {
+                $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+                });
+            }, 5000);
+        
+            map.addControl(new mapboxgl.NavigationControl());
+            
+            map.on('load', function () {
+        
+                map.loadImage('{{icone_sport.image.url}}', function(error, image) {
+                    if (error) throw error;
+                    map.addImage('icone-sport', image);
+        
+                    map.addLayer({
+                        "id": "challenges",
+                        "type": "symbol",
+                        "source": {
+                            "type": "geojson",
+                            "data": {
+                                "type": "FeatureCollection",
+                                "features": [
+        
+                                {% for point in points %}
+        
+                                    {
+                                        "type": "Feature",
+                                        "properties": {
+                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [{{point.x}}, {{point.y}}]
+                                        }
+                                    },
+        
+                                {% endfor %}
+        
+                                ]
+                            }
+                        },
+                        "layout": {
+                            "icon-image": "icone-sport",
+                            "icon-size": 0.45,
+                            "icon-allow-overlap": true
+                        }
+                    });
+                });
+        
+                map.on('click', 'challenges', function (e) {
+                    
+                    if (((e.features[0].geometry.coordinates[0] > (crd.longitude - 0.002)) && (e.features[0].geometry.coordinates[0] < (crd.longitude + 0.002))) && ((e.features[0].geometry.coordinates[1] > (crd.latitude - 0.002)) && (e.features[0].geometry.coordinates[1] < (crd.latitude + 0.002))) ) {
+                   
+                        new mapboxgl.Popup()
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML(e.features[0].properties.description)
+                        .addTo(map);
+        
+                    } else {
+        
+                        new mapboxgl.Popup()
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
+                        .addTo(map);
+        
+                    };
+                });
+            
+                map.on('mouseenter', 'challenges', function () {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+            
+                map.on('mouseleave', 'challenges', function () {
+                    map.getCanvas().style.cursor = '';
+                });
+          
+            
+            {% for user in users %}
+            map.loadImage('{{user.pp.image.url}}', function(error, image) {
+                if (error) throw error;
+                map.addImage('{{user.username}}', image);
+                
+                {{user.username}} = '/user_position/?id_user={{user.id}}';
+        
+                window.setInterval(function() {
+        
+                    map.getSource('{{user.id}}').setData({{user.username}});
+        
+                }, 8000);
+        
+                map.addSource('{{user.id}}', { type: 'geojson', data: {{user.username}} });
+                map.addLayer({
+                                "id": "{{user.id}}",
+                                "type": "symbol",
+                                "source": '{{user.id}}',
+                                "layout": {
+                                    "icon-image": "{{user.username}}",
+                                    "icon-size": 0.15,
+                                    "icon-allow-overlap": true
+                                }
+                            });
+        
+                // When a click event occurs on a feature in the places layer, open a popup at the
+                // location of the feature, with description HTML from its properties.
+                map.on('click', '{{user.id}}', function (e) {
+                    new mapboxgl.Popup()
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML(e.features[0].properties.description)
+                        .addTo(map);
+                });
+        
+                // Change the cursor to a pointer when the mouse is over the places layer.
+                map.on('mouseenter', '{{user.id}}', function () {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+        
+                // Change it back to a pointer when it leaves.
+                map.on('mouseleave', '{{user.id}}', function () {
+                    map.getCanvas().style.cursor = '';
+                });
+            });
+        
+            {% endfor %}
+            
+                map.loadImage('{{utilisateur.pp.image.url}}', function(error, image) {
+                
+                if (error) throw error;
+                map.addImage('utilisateur', image);
+        
+                utilisateur_position = '/user_position_me/?id_user={{utilisateur.id}}';
+        
+                window.setInterval(function() {
+        
+                    map.getSource('test').setData(utilisateur_position);
+        
+                }, 5000);
+        
+                map.addSource('test', { type: 'geojson', data: utilisateur_position });
+                map.addLayer({
+                                "id": "{{utilisateur.id}}",
+                                "type": "symbol",
+                                "source": "test" ,
+                                "layout": {
+                                    "icon-image": "utilisateur",
+                                    "icon-size": 0.2,
+                                    "icon-allow-overlap": true
+                                }
+                            });
+        
+                            // When a click event occurs on a feature in the places layer, open a popup at the
+                            // location of the feature, with description HTML from its properties.
+                            map.on('click', '{{user.id}}', function (e) {
+                                new mapboxgl.Popup()
+                                    .setLngLat(e.features[0].geometry.coordinates)
+                                    .setHTML(e.features[0].properties.description)
+                                    .addTo(map);
+                            });
+        
+                            // Change the cursor to a pointer when the mouse is over the places layer.
+                            map.on('mouseenter', '{{user.id}}', function () {
+                                map.getCanvas().style.cursor = 'pointer';
+                            });
+        
+                            // Change it back to a pointer when it leaves.
+                            map.on('mouseleave', '{{user.id}}', function () {
+                                map.getCanvas().style.cursor = '';
+                            });
+                        });  
+        
+               
+        
+                }); 
+    };
+
+    map(crd);
     
     $('.nbre_notification').click(function () {
             $.ajax({

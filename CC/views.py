@@ -501,7 +501,7 @@ def user_map (request):
         xplus = x + 0.02
         yplus = y + 0.009
         
-        while (3000 - nb_raws) > 1 :
+        while (700 - nb_raws) > 1 :
             x = random.uniform(xmoins, xplus)
             y = random.uniform(ymoins, yplus)
             sous_categorie = Sous_Theme.objects.all().order_by('?')[:1]
