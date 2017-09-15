@@ -136,7 +136,8 @@
                         return dist
                     };
 
-                    var result = 0.007;
+                    var lat
+                    var result = distance(48, 1.65, crd.latitude, crd.longitude, "K");
                     
                     if (result < 0.07) {
                         new mapboxgl.Popup()
