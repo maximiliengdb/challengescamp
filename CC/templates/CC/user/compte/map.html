@@ -110,21 +110,12 @@
         
                 map.on('click', 'challenges', function (e) {
                     
-                    if (((e.features[0].geometry.coordinates[0] > (crd.longitude - 0.002)) && (e.features[0].geometry.coordinates[0] < (crd.longitude + 0.002))) && ((e.features[0].geometry.coordinates[1] > (crd.latitude - 0.002)) && (e.features[0].geometry.coordinates[1] < (crd.latitude + 0.002))) ) {
-                        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
         
                         new mapboxgl.Popup()
                         .setLngLat(e.features[0].geometry.coordinates)
                         .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
                         .addTo(map);
         
-                    };
                 });
             
                 map.on('mouseenter', 'challenges', function () {
