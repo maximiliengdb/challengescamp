@@ -29,7 +29,9 @@
                     </div>
                     <br/>
                     <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-
+                    <div>
+                    </br>
+                    </div>    
              </div>
         </div>
 
@@ -47,18 +49,21 @@
 
     function success(pos) {
     crd = pos.coords;
+    window.setInterval(function() {
+        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+        });
+    }, 5000);
 
     };
 
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
-    document.location.href="/compte/map_error";
     };
 
     id = navigator.geolocation.watchPosition(success, error, options);
 
     function map(crd){
-
+        
         var map = new mapboxgl.Map({
             container: 'map',
             style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
@@ -67,19 +72,13 @@
             });
         
             document.getElementById('fly').addEventListener('click', function () {
-                // Fly to a random location by offsetting the point -74.50, 40
-                // by up to 5 degrees.
+
                 map.flyTo({
                     center: [crd.longitude, crd.latitude],
                     zoom: 17,
                 });
             });
-        
-            window.setInterval(function() {
-                $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-                });
-            }, 5000);
-        
+
             map.addControl(new mapboxgl.NavigationControl());
             
             map.on('load', function () {
@@ -242,9 +241,6 @@
                                 map.getCanvas().style.cursor = '';
                             });
                         });  
-        
-               
-        
                 }); 
     };
 
