@@ -39,30 +39,31 @@
 {% block javascript %}
 <script>
 
-    var options = {
-    enableHighAccuracy: true,
-    timeout: 2000,
-    maximumAge: 0
-    };
-
-    var crd
-
-    function success(pos) {
-    window.crd = pos.coords;
-    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-            });
-    };
-
-
-    function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-    };
-    
-    id = navigator.geolocation.watchPosition(success, error, options);
-
-    alert (crd);
-
     function map(crd){
+
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 2000,
+            maximumAge: 0
+            };
+        
+        
+        var crd
+        
+            function success(pos) {
+            window.crd = pos.coords;
+            $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+                    });
+            };
+            
+
+            function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+            };
+            
+            id = navigator.geolocation.watchPosition(success, error, options);
+
+            alert(crd);
         
         var map = new mapboxgl.Map({
             container: 'map',
