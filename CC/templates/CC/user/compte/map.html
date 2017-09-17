@@ -52,6 +52,8 @@
     $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
             });
 
+    alert (crd);
+
     };
 
     function error(err) {
@@ -60,8 +62,8 @@
     
     id = navigator.geolocation.getCurrentPosition(success, error, options);
 
-    alert (crd);
     
+
     function map(crd){
         
         var map = new mapboxgl.Map({
