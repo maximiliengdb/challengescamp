@@ -53,14 +53,14 @@
             });
     };
 
+
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
     
-    id = navigator.geolocation.getCurrentPosition(success, error, options);
+    id = navigator.geolocation.watchPosition(success, error, options);
 
     alert (crd);
-    
 
     function map(crd){
         
