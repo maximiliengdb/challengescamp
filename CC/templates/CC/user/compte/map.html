@@ -58,7 +58,7 @@
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
     
-    id = navigator.geolocation.watchPosition(success, error, options);
+    id = navigator.geolocation.getCurrentPosition(success, error, options);
 
     function map(crd){
         
