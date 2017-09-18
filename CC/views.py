@@ -518,6 +518,7 @@ def user_map (request):
     
     return render(request, 'CC/user/compte/map.html', locals())
 
+
 @login_required(login_url='connexion')
 def user_map_error (request):
     

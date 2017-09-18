@@ -39,36 +39,35 @@
 {% block javascript %}
 <script>
 
+    var options = {
+    enableHighAccuracy: true,
+    timeout: 2000,
+    maximumAge: 0
+    };
+
+
+    var test
+
+    function success(pos) {
+    test = pos.coords;
+    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+test.latitude+'&longitude='+test.longitude,
+            });
+    };
+
+    function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+    
+    navigator.geolocation.watchPosition(success, error, options);
+
+
     function map(crd){
 
-        var options = {
-            enableHighAccuracy: true,
-            timeout: 2000,
-            maximumAge: 0
-            };
-        
-        
-        var crd
-        
-            function success(pos) {
-            window.crd = pos.coords;
-            $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-                    });
-            };
-            
 
-            function error(err) {
-            console.warn(`ERROR(${err.code}): ${err.message}`);
-            };
-            
-            id = navigator.geolocation.watchPosition(success, error, options);
-
-            alert(crd);
-        
         var map = new mapboxgl.Map({
             container: 'map',
             style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
-            center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
+            center: [crd.longitude, crd.latitude],
             zoom: 17,
             });
         
@@ -263,7 +262,7 @@
             }); 
     };
 
-    map(crd);
+    map(test);
     
     $('.nbre_notification').click(function () {
             $.ajax({
