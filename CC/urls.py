@@ -11,10 +11,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.home, name='home'),
     
-    
-    url(r'^inscription', views.inscription, name='Inscription'),
-    url(r'^connexion', views.connexion, name='Connexion'),
-    url(r'^deconnexion', views.deconnexion, name='Deconnexion'),
+    url(r'^inscription$', views.inscription, name='Inscription'),
+    url(r'^connexion$', views.connexion, name='Connexion'),
+    url(r'^deconnexion$', views.deconnexion, name='Deconnexion'),
     url(r'^recherche$', views.recherche, name='Recherche'),
     
     url(r'^compte/vestiaire/', views.user_dashboard, name='Dashboard'),
