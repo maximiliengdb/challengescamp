@@ -45,7 +45,6 @@
     maximumAge: 0
     };
 
-    
 
     function success(pos) {
     crd = pos.coords;
@@ -61,8 +60,6 @@
     id = navigator.geolocation.watchPosition(success, error, options);
 
     function map(){
-
-        console.log(test);
         
         var map = new mapboxgl.Map({
             container: 'map',
