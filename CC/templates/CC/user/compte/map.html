@@ -29,7 +29,7 @@
                     </div>
                     <br/>
                     <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-                    <div>
+                    <div style="margin : 5%;">
                     </br>
                     </div>    
              </div>
@@ -223,7 +223,7 @@
         
                     map.getSource('test').setData(utilisateur_position);
         
-                }, 5000);
+                }, 3000);
         
                 map.addSource('test', { type: 'geojson', data: utilisateur_position });
                 map.addLayer({
