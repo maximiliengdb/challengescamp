@@ -38,40 +38,41 @@
 
 {% block javascript %}
 <script>
-
+    
     var options = {
     enableHighAccuracy: true,
     timeout: 2000,
     maximumAge: 0
     };
 
-    var test
+    
 
     function success(pos) {
-    test = pos.coords;
-    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+test.latitude+'&longitude='+test.longitude,
+    crd = pos.coords;
+    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
             });
     };
+
 
     function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     };
     
-    navigator.geolocation.watchPosition(success, error, options);
+    id = navigator.geolocation.watchPosition(success, error, options);
 
+    function map(){
 
-    function map(crd){
-
-
+        console.log(test);
+        
         var map = new mapboxgl.Map({
             container: 'map',
             style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
-            center: [crd.longitude, crd.latitude],
+            center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
             zoom: 17,
             });
         
             document.getElementById('fly').addEventListener('click', function () {
-
+                
                 map.flyTo({
                     center: [crd.longitude, crd.latitude],
                     zoom: 17,
@@ -261,7 +262,7 @@
             }); 
     };
 
-    map(test);
+    map();
     
     $('.nbre_notification').click(function () {
             $.ajax({
