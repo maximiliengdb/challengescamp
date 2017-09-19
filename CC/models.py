@@ -114,6 +114,27 @@ class Proposition_Defi (models.Model):
     
     
     def __str__(self):
+        return self.nom   
+    
+class Proposition_Point (models.Model):       
+    nom = models.CharField(max_length = 255, default="Sans Titre")
+    description = models.CharField(max_length = 5000, default="Sans Titre")
+    
+    latitude = models.FloatField(default = 0)
+    longitude = models.FloatField(default = 0)
+    auteur = models.ForeignKey(Utilisateur)
+    
+    ETAT = (
+        ('E', 'Envoyé'),
+        ('D', 'Default'),
+        ('V', 'Validé'),
+        ('S', 'Signalé'),
+    )
+    
+    etat = models.CharField(max_length=2, choices=ETAT, default='E')
+    
+    
+    def __str__(self):
         return self.nom    
 
 class Preuve(models.Model):

@@ -37,18 +37,26 @@ class libellePropisitionDefi(admin.ModelAdmin):
     list_display   = ('nom', 'description', 'auteur', 'etat',)
     search_fields  = ('nom', 'description', 'auteur', 'etat',)
     
+class libellePropisitionPoint(admin.ModelAdmin):
+    list_display   = ('nom', 'description', 'auteur', 'etat',)
+    search_fields  = ('nom', 'description', 'auteur', 'etat', 'latitude', 'longitude')
+    
 class libelleNotification(admin.ModelAdmin):
     list_display   = ('type', 'message', 'auteur', 'recepteur', 'date',)
     
 class libelleMapPoint(admin.ModelAdmin):
     list_display   = ('id_osm', 'nom', 'attribut', 'categorie', 'sous_categorie')
     
+class libellePhoto(admin.ModelAdmin):
+    list_display   = ('nom', 'image')
+    
 
 admin.site.register(Utilisateur, UtilisateurAdmin),
 admin.site.register(Signalement),
-admin.site.register(Photo),
+admin.site.register(Photo, libellePhoto),
 admin.site.register(Defi, DefiAdmin),
 admin.site.register(Proposition_Defi, libellePropisitionDefi),
+admin.site.register(Proposition_Point, libellePropisitionPoint),
 admin.site.register(Preuve),
 admin.site.register(Libelle_Defi, libelleDefi),
 admin.site.register(Theme),

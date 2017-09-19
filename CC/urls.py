@@ -36,7 +36,8 @@ urlpatterns = [
     url(r'^compte/mes_amis', views.user_amis, name='Amis Page'),
     url(r'^compte/mes_defis', views.user_defis, name='Defis Page'),
     url(r'^compte/proposition_defi$', views.user_proposition_defi, name='Proposition Defi'),
-    url(r'^compte/proposition_defi_etat$', views.user_proposition_defi_etat, name='Proposition Etat'),
+    url(r'^compte/proposition_point$', views.user_map_proposition_point, name='Proposition Point'),
+    url(r'^compte/propositions$', views.user_proposition_etat, name='Propositions Etat'),
     url(r'^compte/demande_ami/page', views.user_demande_ami_page, name='Demande Ami'),
     url(r'^compte/classements', views.user_classement, name='Classement'),
     

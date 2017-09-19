@@ -162,7 +162,7 @@ def inscription (request):
 
 
 def connexion (request):
-        
+         
     error = False
     lien_source = False
     message, type_message = message_alerte(request)
@@ -253,7 +253,7 @@ def user_notification_active(request, notif_id):
     
     return 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_dashboard (request):
     
     mise_a_jour(request)
@@ -421,7 +421,7 @@ def user_changement_pa (request):
     
     return render(request, 'CC/user/compte/changement_pa.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_changement_mdp (request):
     
     identifiant_utilisateur = request.user.id
@@ -460,7 +460,7 @@ def user_changement_mdp (request):
     return render(request, 'CC/user/compte/changement_mdp.html', locals())
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_map (request):
     
     identifiant_utilisateur = request.user.id
@@ -519,7 +519,7 @@ def user_map (request):
     return render(request, 'CC/user/compte/map.html', locals())
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_map_error (request):
     
     identifiant_utilisateur = request.user.id
@@ -567,7 +567,7 @@ def user_map_push_position(request, id_user, latitude, longitude):
     
     return HttpResponse("OK")
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_map_tri(request):
     identifiant_utilisateur = request.user.id
     utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
@@ -584,8 +584,35 @@ def user_map_tri(request):
     
     return  render(request, 'CC/user/compte/map_tri.html', locals())
 
+@login_required(login_url='/connexion')
+def user_map_proposition_point (request):
+    
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
+    message, type_message = message_alerte(request)
+    
+    nom_page = "Le Vestiaire"
+    
+    latitude = utilisateur.latitude
+    longitude = utilisateur.longitude
 
-@login_required(login_url='connexion') 
+    if request.method == 'POST':
+        
+        nom = request.POST['nom']
+        description = request.POST['description']
+        
+        point = Proposition_Point(nom=nom, description=description, auteur=utilisateur, latitude = latitude, longitude = longitude)
+        point.save()
+        
+        request.session['message'] = "Merci pour votre proposition, nous allons la traiter dans les plus bref delais"
+        request.session['type_message'] = "alert-success"
+        
+        return redirect(user_map_preload)
+    
+    return render(request, 'CC/user/compte/proposition_map_point.html', locals())
+
+@login_required(login_url='/connexion') 
 def user_amis(request):
     
     identifiant_utilisateur = request.user.id
@@ -599,7 +626,7 @@ def user_amis(request):
     
     return render(request, 'CC/user/compte/mes_amis.html', locals())
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_defis(request):
     
     identifiant_utilisateur = request.user.id
@@ -613,7 +640,7 @@ def user_defis(request):
     
     return render(request, 'CC/user/compte/mes_defis.html', locals())
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_demande_ami_page(request):
     
     identifiant_utilisateur = request.user.id
@@ -628,7 +655,7 @@ def user_demande_ami_page(request):
         rien = True
     return render(request, 'CC/user/compte/demande_ami.html', locals())
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_demande_defi_page(request):
     
     identifiant_utilisateur = request.user.id
@@ -640,7 +667,7 @@ def user_demande_defi_page(request):
     
     return render(request, 'CC/user/compte/demande_defi_page.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_demande_ami(request, id_ami):
     
     identifiant_utilisateur = request.user.id
@@ -665,7 +692,7 @@ def user_demande_ami(request, id_ami):
     return redirect('/compte/profil_public/?profil=' + x)
 
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_ajout_ami(request, id_ami):
     
     identifiant_utilisateur = request.user.id
@@ -696,7 +723,7 @@ def user_ajout_ami(request, id_ami):
     return redirect('/compte/profil_public/?profil=' + x)
 
 
-@login_required(login_url='connexion') 
+@login_required(login_url='/connexion') 
 def user_refu_ami(request, id_ami):
     
     identifiant_utilisateur = request.user.id
@@ -718,7 +745,7 @@ def user_refu_ami(request, id_ami):
     
     return redirect(user_dashboard)
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_profil_prive (request):
     
     identifiant_utilisateur = request.user.id
@@ -748,7 +775,7 @@ def user_profil_prive (request):
     
     return render(request, 'CC/user/user.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_profil_public (request, profil):
     
     identifiant_utilisateur = request.user.id
@@ -800,7 +827,7 @@ def user_profil_public (request, profil):
 
     return render(request, 'CC/user/user.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_proposition_defi (request):
     
     identifiant_utilisateur = request.user.id
@@ -826,8 +853,8 @@ def user_proposition_defi (request):
     return render(request, 'CC/user/compte/proposition_defi.html', locals())
 
 
-@login_required(login_url='connexion')
-def user_proposition_defi_etat (request):
+@login_required(login_url='/connexion')
+def user_proposition_etat (request):
     
     identifiant_utilisateur = request.user.id
     utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
@@ -837,11 +864,12 @@ def user_proposition_defi_etat (request):
     nom_page = "Le Vestiaire"
 
     defis = Proposition_Defi.objects.filter(auteur = utilisateur)
+    points = Proposition_Point.objects.filter(auteur = utilisateur)
 
     return render(request, 'CC/user/compte/proposition_etat.html', locals())
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def user_classement (request):
     
     identifiant_utilisateur = request.user.id
@@ -901,7 +929,7 @@ def user_validation_email(request, id_user):
     
     return redirect(user_dashboard)
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def recherche (request):
     
     identifiant_utilisateur = request.user.id
@@ -939,7 +967,7 @@ def arene_defi_cible(request, id_user):
     
     return redirect(arene_accueil)
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_accueil (request):
     
     identifiant_utilisateur = request.user.id
@@ -960,7 +988,7 @@ def arene_accueil (request):
     
     return render(request, 'CC/arene/accueil.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_accueil_defi (request, id_defi):
     
     identifiant_utilisateur = request.user.id
@@ -986,7 +1014,7 @@ def arene_accueil_defi (request, id_defi):
     return render(request, 'CC/arene/defi_libelle.html', locals())
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_page (request, id_defi):
     
     identifiant_utilisateur = request.user.id
@@ -1055,7 +1083,7 @@ def arene_defi_page (request, id_defi):
         
     return render(request, 'CC/arene/defi.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_page_moderation (request):
     
     identifiant_utilisateur = request.user.id
@@ -1090,7 +1118,7 @@ def arene_defi_page_moderation (request):
            
     return render(request, 'CC/arene/defi_moderation.html', locals())
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_page_moderation_vide (request):
     
     identifiant_utilisateur = request.user.id
@@ -1142,7 +1170,7 @@ def arene_defi_map (request, id_defi):
     return redirect(lien)
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_lance (request):
     
     identifiant_utilisateur = request.user.id
@@ -1208,7 +1236,7 @@ def arene_defi_lance (request):
     
     return redirect(arene_accueil)
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_accepte (request, id_defi):
     
     identifiant_utilisateur = request.user.id
@@ -1231,7 +1259,7 @@ def arene_defi_accepte (request, id_defi):
     
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
     
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_refuse (request, id_defi):
     
     identifiant_utilisateur = request.user.id
@@ -1253,7 +1281,7 @@ def arene_defi_refuse (request, id_defi):
     
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_preuve (request):
     
     identifiant_utilisateur = request.user.id
@@ -1287,7 +1315,7 @@ def arene_defi_preuve (request):
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_valide (request, id_defi):
     
     identifiant_utilisateur = request.user.id
@@ -1339,7 +1367,7 @@ def arene_defi_valide (request, id_defi):
         
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_conteste (request):
     
     identifiant_utilisateur = request.user.id
@@ -1387,7 +1415,7 @@ def arene_defi_conteste (request):
     
     return redirect('/arene/defi/?id_defi='+ str(defi.id))
 
-@login_required(login_url='connexion')
+@login_required(login_url='/connexion')
 def arene_defi_signale (request):
     
     identifiant_utilisateur = request.user.id
