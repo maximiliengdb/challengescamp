@@ -36,10 +36,11 @@ class Utilisateur(User):
     
     score_cuisine = models.IntegerField(default = 0)
     score_sport = models.IntegerField(default = 0)
-    score_extreme = models.IntegerField(default = 0)
-    score_social_environnement = models.IntegerField(default = 0)
+    score_elite = models.IntegerField(default = 0)
+    score_citoyen = models.IntegerField(default = 0)
     score_autre = models.IntegerField(default = 0)
-    score_arts = models.IntegerField(default = 0)
+    score_creation = models.IntegerField(default = 0)
+    score_gaming = models.IntegerField(default = 0)
     
     pp = models.ForeignKey('Photo', related_name="pp", default = 1)
     pa = models.ForeignKey('Photo', related_name="pa", default = 2)

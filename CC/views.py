@@ -480,20 +480,41 @@ def user_map (request):
     
     raws = MapPoint.objects.filter(Q(y__gte = ymoins)&Q(y__lte = yplus),Q(x__lte = xplus)&Q(x__gte = xmoins)).order_by('?').exclude(sous_categorie = "rien")[:670]
     nb_raws = len(raws)
-    points = []
-    
+    points_sport = []
+    points_cuisine = []
+    points_gaming = []
+    points_citoyen = []
+    points_creation = []
+    points_elite = []
+    points_autre = []
+
     for raw in raws :
-        sous_categorie = raw.sous_categorie
+        cat = raw.sous_categorie.split(";")
+        sous_categorie = random.choice(cat)
         if sous_categorie == "rien" :
-            sous_categorie = 1
-            
-        if sous_categorie == "Vélo" :
-            sous_categorie = 1
+            Sous_Theme.objects.get(nom = "Autre")
+        else :
+            sous_categorie = Sous_Theme.objects.get(nom = sous_categorie)
             
         defi = Libelle_Defi.objects.filter(sous_theme = sous_categorie).order_by('?').exclude(active = False)[:1]
         point = MapPoint(x = raw.x, y = raw.y, categorie = raw.categorie, defi = defi[0])
-        points.append(raw)
         
+        if sous_categorie.theme.nom == "Sport" :
+            points_sport.append(point)
+        elif sous_categorie.theme.nom == "Cuisine" :
+            points_cuisine.append(point)
+        elif sous_categorie.theme.nom == "Création" :
+            points_creation.append(point)
+        elif sous_categorie.theme.nom == "Citoyen" :
+            points_citoyen.append(point)
+        elif sous_categorie.theme.nom == "Gaming" :
+            points_sport.append(point)
+        elif sous_categorie.theme.nom == "Elite" :
+            points_elite.append(point)
+        elif sous_categorie.theme.nom == "Autre" :
+            points_autre.append(point)
+            
+       
     if nb_raws < 700 :
         
         xmoins = x - 0.02
@@ -505,14 +526,34 @@ def user_map (request):
             x = random.uniform(xmoins, xplus)
             y = random.uniform(ymoins, yplus)
             sous_categorie = Sous_Theme.objects.all().order_by('?')[:1]
+            defi = Libelle_Defi.objects.filter(sous_theme = sous_categorie[0]).exclude(active = False).order_by('?')[:1]
+            categorie = defi[0].theme.nom
+            point = MapPoint(y = str(y), x = str(x) , categorie = categorie, defi = defi[0])
             
-            defi = Libelle_Defi.objects.filter(sous_theme = sous_categorie).exclude(active = False).order_by('?')[:1]
-            
-            point = MapPoint(y = str(y), x = str(x) ,nom = "Point au hasard", id_osm = "XXXXXX", attribut = "Challenges.Camp point d'intéret", defi = defi[0])
-            points.append(point)
+            if categorie == "Sport" :
+                points_sport.append(point)
+            elif categorie == "Cuisine" :
+                points_cuisine.append(point)
+            elif categorie == "Création" :
+                points_creation.append(point)
+            elif categorie == "Citoyen" :
+                points_citoyen.append(point)
+            elif categorie == "Gaming" :
+                points_sport.append(point)
+            elif categorie == "Elite" :
+                points_elite.append(point)
+            elif categorie == "Autre" :
+                points_autre.append(point)
+
             nb_raws = nb_raws + 1
         
-    icone_sport = Photo.objects.get(nom = "icone-sport")
+    icone_sport = Photo.objects.get(nom = "icone_sport")
+    icone_cuisine = Photo.objects.get(nom = "icone_cuisine")
+    icone_gaming = Photo.objects.get(nom = "icone_gaming")
+    icone_autre = Photo.objects.get(nom = "icone_autre")
+    icone_creation = Photo.objects.get(nom = "icone_creation")
+    icone_elite = Photo.objects.get(nom = "icone_elite")
+    icone_citoyen = Photo.objects.get(nom = "icone_citoyen")
     
     users = utilisateur.amis.all().exclude(position = False)
     
@@ -1331,14 +1372,16 @@ def arene_defi_valide (request, id_defi):
         defi.challengeur.score_sport =  defi.challengeur.score_sport + defi.libelle.recompense.points
     if defi.libelle.theme.nom == "Cuisine" :
         defi.challengeur.score_cuisine =  defi.challengeur.score_cuisine + defi.libelle.recompense.points
-    if defi.libelle.theme.nom == "Extreme" :
-        defi.challengeur.score_extreme =  defi.challengeur.score_extreme + defi.libelle.recompense.points
-    if defi.libelle.theme.nom == "Social/Environnement" :
-        defi.challengeur.score_social_environnement =  defi.challengeur.score_social_environnement + defi.libelle.recompense.points
-    if defi.libelle.theme.nom == "Arts" :
-        defi.challengeur.score_arts =  defi.challengeur.score_arts + defi.libelle.recompense.points
+    if defi.libelle.theme.nom == "Elite" :
+        defi.challengeur.score_elite =  defi.challengeur.score_elite + defi.libelle.recompense.points
+    if defi.libelle.theme.nom == "Citoyen" :
+        defi.challengeur.score_citoyen =  defi.challengeur.score_citoyen + defi.libelle.recompense.points
+    if defi.libelle.theme.nom == "Création" :
+        defi.challengeur.score_creation =  defi.challengeur.score_creation + defi.libelle.recompense.points
     if defi.libelle.theme.nom == "Autre" :
         defi.challengeur.score_autre =  defi.challengeur.score_autre + defi.libelle.recompense.points
+    if defi.libelle.theme.nom == "Gaming" :
+        defi.challengeur.score_gaming =  defi.challengeur.score_gaming + defi.libelle.recompense.points
     
     defi.challengeur.save()
     

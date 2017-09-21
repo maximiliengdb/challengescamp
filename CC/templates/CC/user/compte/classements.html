@@ -150,7 +150,6 @@
                                                             <th>#</th>
                                                             <th>Nom</th>
                                                             <th>Points</th>
-                                                            <th>Nationalité</th>
                                                         </thead>
                                                         <tbody>
                                                             {% for challengeur in absolu %}
@@ -166,7 +165,6 @@
                                                                     <td>{{forloop.counter}}</td>
                                                                     <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
                                                                     <td>{{challengeur.score_absolu}}</td>
-                                                                    <td>Niger</td>
                                                                 </tr>
                                                                 {% endif %}
                                                             {% endfor %}
@@ -204,7 +202,6 @@
                                                             <th>#</th>
                                                             <th>Nom</th>
                                                             <th>Points</th>
-                                                            <th>Nationalité</th>
                                                         </thead>
                                                         <tbody>
 
@@ -222,7 +219,6 @@
                                                                     <td>{{forloop.counter}}</td>
                                                                     <td><a href="/compte/profil_public/?profil={{challengeur.id}}" >{{challengeur.first_name|title}} {{challengeur.last_name|title}}</a></td>
                                                                     <td>{{challengeur.score_absolu}}</td>
-                                                                    <td>Niger</td>
                                                                 </tr>
                                                                 {% endif %}
                                                             {% endfor %}
