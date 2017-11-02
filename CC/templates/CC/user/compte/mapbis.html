@@ -70,7 +70,11 @@
         minZoom: 14,
     }).addTo(map);
 
-    L.control.locate().addTo(map);
+    lc = L.control.locate({
+        strings: {
+            title: "Show me where I am, yo!"
+        }
+    }).addTo(map);
 
     var LeafIcon = L.Icon.extend({
         options: {
