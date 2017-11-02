@@ -557,7 +557,7 @@ def user_map (request):
     
     users = utilisateur.amis.all().exclude(position = False)
     
-    return render(request, 'CC/user/compte/map.html', locals())
+    return render(request, 'CC/user/compte/mapbis.html', locals())
 
 
 @login_required(login_url='/connexion')
@@ -1340,10 +1340,23 @@ def arene_defi_preuve (request):
         files = request.FILES.getlist('preuves')
         nom_preuve = "DEFI"+str(defi.id)+"USER"+str(utilisateur.id)
         for f in files:
-           preuve = Preuve(nom = nom_preuve, fichier = f)
-           preuve.save()
-           defi.preuve.add(preuve)
-           defi.save()
+            
+            image_field = f
+            image_file = BytesIO(image_field.read())
+            image = Image.open(image_file)
+    
+            
+            image = resizeimage.resize_width(image, 600)
+            
+            image_file = BytesIO()
+            image.save(image_file, 'JPEG', quality=90)
+            
+            
+            preuve = Preuve(nom = nom_preuve, fichier = image)
+            preuve.save()
+            defi.preuve.add(preuve)
+            defi.save()
+            
 
            
     defi.save()
