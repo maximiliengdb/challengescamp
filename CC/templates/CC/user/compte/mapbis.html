@@ -36,11 +36,6 @@
                     <div id='map' style='width: auto; height: 550px;'>
                     
                     </div>
-                    <br/>
-                    <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-                    <div style="margin : 5%;">
-                    </br>
-                    </div>    
              </div>
         </div>
 
@@ -71,7 +66,6 @@
     var map = L.map('map').setView([{{utilisateur.latitude}}, {{utilisateur.longitude}}], 17);
     
     L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-        attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18,
         minZoom: 14,
     }).addTo(map);
