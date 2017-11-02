@@ -71,10 +71,10 @@
     }).addTo(map);
 
     var lc = L.control.locate({
+        flyTo : 'True',
         strings: {
             title: "Show me where I am, yo!"
         },
-        flyTo: True,
     }).addTo(map);
 
     var LeafIcon = L.Icon.extend({
