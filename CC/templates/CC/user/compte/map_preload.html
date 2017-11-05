@@ -23,34 +23,47 @@
 {% block javascript %}
 <script>
 
+
+    position = {};
+    
     var options = {
-    enableHighAccuracy: true,
-    timeout: 500,
-    maximumAge: 0
-    };
-
-
+        enableHighAccuracy: true,
+        timeout: 1000,
+        maximumAge: 0
+        };
+    
     function success(pos) {
-    var crd = pos.coords;
-
-    console.log('Your current position is:');
-    console.log(`Latitude : ${crd.latitude}`);
-    console.log(`Longitude: ${crd.longitude}`);
-    console.log(`More or less ${crd.accuracy} meters.`);
-
-    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-    });
-
-    };
+        crd = pos.coords;
+        position['latitude'] = crd.latitude;
+        position['longitude'] = crd.longitude;
+        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+                });
+        };
 
     function error(err) {
-    document.location.href="/compte/map_error";
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-    };
+        document.location.href="/compte/map_error";
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+        };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
 
-    setTimeout(function(){document.location.href="/compte/map"; }, 2500);
+
+    function RedirectionJavascript(){
+        window.location.href="/compte/map"; 
+      };
+
+    window.setInterval(function() {
+
+        
+        if (position.latitude != 0){
+
+            RedirectionJavascript(); 
+        };
+
+    }, 2000);
+
+    
+
 
     $('.nbre_notification').click(function () {
             $.ajax({

@@ -58,7 +58,6 @@
         position['longitude']= crd.longitude;
         $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
                 });
-        return crd;
         };
 
 
@@ -108,9 +107,6 @@
         layer["utilisateur"].setLatLng(newLatLng);
 
     }, 3000);
-
-
-    console.log(utilisateur);
 
     var sportIcon = new LeafIcon({iconUrl: '{{icone_sport.image.url}}'}); 
     var gamingIcon = new LeafIcon({iconUrl: '{{icone_gaming.image.url}}'}); 
@@ -184,9 +180,8 @@
         var long = position.longitude
 
         var result = distance(marker._latlng.lat, marker._latlng.lng, lat, long, "K");
-        console.log(result);
         if (result > 0.1) {
-            marker.bindPopup('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
+            marker._popup.setContent('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
         };
     });
 
