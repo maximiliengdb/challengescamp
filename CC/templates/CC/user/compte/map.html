@@ -31,750 +31,183 @@
                         <div class="col-xs-6">
                                 <a type="button" class="btn btn-primary btn-block" href="/compte/proposition_point">Proposer un Point</a>
                         </div>
+                        
                     </div>
                     <div id='map' style='width: auto; height: 550px;'>
                     
                     </div>
-                    <br/>
-                    <button id='fly'><img src="{{utilisateur.pp.image.url}}" class="image-responsive" style="height: 40px; margin: -5px"/></button>
-                    <div style="margin : 5%;">
-                    </br>
-                    </div>    
              </div>
         </div>
 
 
 {% block javascript %}
 <script>
-    
+
+    position = {};
+
     var options = {
-    enableHighAccuracy: true,
-    timeout: 2000,
-    maximumAge: 0
-    };
-
-
+        enableHighAccuracy: true,
+        timeout: 1000,
+        maximumAge: 0
+        };
+    
+   
     function success(pos) {
-    crd = pos.coords;
-    $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-            });
-    };
+        crd = pos.coords;
+        position['latitude']= crd.latitude;
+        position['longitude']= crd.longitude;
+        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+                });
+        };
 
 
     function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-    };
-    
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+        };
+        
     id = navigator.geolocation.watchPosition(success, error, options);
 
-    function map(){
-        
-        var map = new mapboxgl.Map({
-            container: 'map',
-            style: 'https://raw.githubusercontent.com/osm2vectortiles/mapbox-gl-styles/master/styles/bright-v9-cdn.json',
-            center: [{{utilisateur.longitude}}, {{utilisateur.latitude}}],
-            zoom: 17,
-            minZoom : 15,
-            });
-        
-            document.getElementById('fly').addEventListener('click', function () {
-                
-                map.flyTo({
-                    center: [crd.longitude, crd.latitude],
-                    zoom: 17,
-                });
-            });
-
-            map.addControl(new mapboxgl.NavigationControl());
-            
-            map.on('load', function () {
-        
-                map.loadImage("{{icone_sport.image.url}}", function(error, image) {
-                    if (error) throw error;
-                    map.addImage('icone-sport', image);
-        
-                    map.addLayer({
-                        "id": "sport",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_sport %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-sport",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
-
-                map.on('click', 'sport', function (e) {
-                    
-                    function distance(lat1, lon1, lat2, lon2, unit) {
-                        var radlat1 = Math.PI * lat1/180
-                        var radlat2 = Math.PI * lat2/180
-                        var theta = lon1-lon2
-                        var radtheta = Math.PI * theta/180
-                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                        dist = Math.acos(dist)
-                        dist = dist * 180/Math.PI
-                        dist = dist * 60 * 1.1515
-                        if (unit=="K") { dist = dist * 1.609344 }
-                        if (unit=="N") { dist = dist * 0.8684 }
-                        return dist
-                    };
-                    
-                    var lat = crd.latitude
-                    var long = crd.longitude
-
-                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                    
-                    if (result < 0.1) {
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
-        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                        .addTo(map);
-        
-                    };
-                });
-            
-                map.on('mouseenter', 'sport', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-            
-                map.on('mouseleave', 'sport', function () {
-                    map.getCanvas().style.cursor = '';
-                });
-
-                map.loadImage("{{icone_cuisine.image.url}}", function(error, image) {
-                    if (error) throw error;
-                    map.addImage('icone-cuisine', image);
-        
-                    map.addLayer({
-                        "id": "cuisine",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_cuisine %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-cuisine",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": false
-                        }
-                    });
-                });
-
-                map.on('click', 'cuisine', function (e) {
-                    
-                    function distance(lat1, lon1, lat2, lon2, unit) {
-                        var radlat1 = Math.PI * lat1/180
-                        var radlat2 = Math.PI * lat2/180
-                        var theta = lon1-lon2
-                        var radtheta = Math.PI * theta/180
-                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                        dist = Math.acos(dist)
-                        dist = dist * 180/Math.PI
-                        dist = dist * 60 * 1.1515
-                        if (unit=="K") { dist = dist * 1.609344 }
-                        if (unit=="N") { dist = dist * 0.8684 }
-                        return dist
-                    };
-                    
-                    var lat = crd.latitude
-                    var long = crd.longitude
-
-                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                    
-                    if (result < 0.07) {
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
-        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                        .addTo(map);
-        
-                    };
-                });
-            
-                map.on('mouseenter', 'cuisine', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-            
-                map.on('mouseleave', 'cuisine', function () {
-                    map.getCanvas().style.cursor = '';
-                });
-
-                map.loadImage("{{icone_creation.image.url}}", function(error, image) {
-                    if (error) throw error;
-                    map.addImage("icone-creation", image);
-        
-                    map.addLayer({
-                        "id": "creation",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_creation %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-creation",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
-
-                map.on('click', 'creation', function (e) {
-                    
-                    function distance(lat1, lon1, lat2, lon2, unit) {
-                        var radlat1 = Math.PI * lat1/180
-                        var radlat2 = Math.PI * lat2/180
-                        var theta = lon1-lon2
-                        var radtheta = Math.PI * theta/180
-                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                        dist = Math.acos(dist)
-                        dist = dist * 180/Math.PI
-                        dist = dist * 60 * 1.1515
-                        if (unit=="K") { dist = dist * 1.609344 }
-                        if (unit=="N") { dist = dist * 0.8684 }
-                        return dist
-                    };
-                    
-                    var lat = crd.latitude
-                    var long = crd.longitude
-
-                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                    
-                    if (result < 0.07) {
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
-        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                        .addTo(map);
-        
-                    };
-                });
-            
-                map.on('mouseenter', 'creation', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-            
-                map.on('mouseleave', 'creation', function () {
-                    map.getCanvas().style.cursor = '';
-                });
-
-                map.loadImage('{{icone_gaming.image.url}}', function(error, image) {
-                    if (error) throw error;
-                    map.addImage('icone-gaming', image);
-        
-                    map.addLayer({
-                        "id": "gaming",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_gaming %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-gaming",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
-
-                map.on('click', 'gaming', function (e) {
-                    
-                function distance(lat1, lon1, lat2, lon2, unit) {
-                    var radlat1 = Math.PI * lat1/180
-                    var radlat2 = Math.PI * lat2/180
-                    var theta = lon1-lon2
-                    var radtheta = Math.PI * theta/180
-                    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                    dist = Math.acos(dist)
-                    dist = dist * 180/Math.PI
-                    dist = dist * 60 * 1.1515
-                    if (unit=="K") { dist = dist * 1.609344 }
-                    if (unit=="N") { dist = dist * 0.8684 }
-                    return dist
-                };
-                
-                var lat = crd.latitude
-                var long = crd.longitude
-
-                var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                
-                if (result < 0.07) {
-                    new mapboxgl.Popup()
-                    .setLngLat(e.features[0].geometry.coordinates)
-                    .setHTML(e.features[0].properties.description)
-                    .addTo(map);
-
-                } else {
-
-                    new mapboxgl.Popup()
-                    .setLngLat(e.features[0].geometry.coordinates)
-                    .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                    .addTo(map);
-
-                };
-            });
-        
-            map.on('mouseenter', 'gaming', function () {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-        
-            map.on('mouseleave', 'gaming', function () {
-                map.getCanvas().style.cursor = '';
-            });
-
-            map.loadImage('{{icone_citoyen.image.url}}', function(error, image) {
-                if (error) throw error;
-                map.addImage('icone-citoyen', image);
+    var map = L.map('map').setView([{{utilisateur.latitude}}, {{utilisateur.longitude}}], 17);
     
-                map.addLayer({
-                    "id": "citoyen",
-                    "type": "symbol",
-                    "source": {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": [
+    L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        minZoom: 15,
+    }).addTo(map);
+
+    var lc = L.control.locate({
+        flyTo : 'True',
+        strings: {
+            title: "Me Localiser"
+        },
+        circleStyle: {
+            color: '#E65100',
+            fillColor: '#E65100',
+            fillOpacity: 0.15,
+            weight: 2,
+            opacity: 0.3
+        },
+        /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
+        markerStyle: {
+            color: '#E65100',
+            fillColor: '#E65100',
+            fillOpacity: 0.7,
+            weight: 2,
+            opacity: 0.1,
+            radius: 0
+        },
+
+    }).addTo(map);
+
+    var LeafIcon = L.Icon.extend({
+        options: {
+            iconSize: [34, 53],
+        }
+    });
+
+    var layer = new Array();
+
+    var utilisateurIcon = L.icon({
+        iconUrl: '{{utilisateur.pp.thumbnail.url}}',
+        iconSize: [60, 60], // size of the icon
+        });
+   
     
-                            {% for point in points_citoyen %}
+    var utilisateur = L.marker([{{utilisateur.latitude}}, {{utilisateur.longitude}}], {icon: utilisateurIcon});
+
+    map.addLayer(utilisateur);
+    layer["utilisateur"] = utilisateur;
     
-                                {
-                                    "type": "Feature",
-                                    "properties": {
-                                        "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                    },
-                                    "geometry": {
-                                        "type": "Point",
-                                        "coordinates": [{{point.x}}, {{point.y}}]
-                                    }
-                                },
+        
+    window.setInterval(function() {
+        
+        var lat = position.latitude;
+        var lng = position.longitude;
+        var newLatLng = new L.LatLng(lat, lng);
+
+        layer["utilisateur"].setLatLng(newLatLng);
+
+    }, 3000);
+
+    var sportIcon = new LeafIcon({iconUrl: '{{icone_sport.image.url}}'}); 
+    var gamingIcon = new LeafIcon({iconUrl: '{{icone_gaming.image.url}}'}); 
+    var cuisineIcon = new LeafIcon({iconUrl: '{{icone_cuisine.image.url}}'}); 
+    var eliteIcon = new LeafIcon({iconUrl: '{{icone_elite.image.url}}'}); 
+    var autreIcon = new LeafIcon({iconUrl: '{{icone_autre.image.url}}'}); 
+    var citoyenIcon = new LeafIcon({iconUrl: '{{icone_citoyen.image.url}}'}); 
+
+
+    {% for point in points_sport %}
     
-                            {% endfor %}
+        L.marker([{{point.y}},{{point.x}}], {icon: sportIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+
+    {% endfor %}
     
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-citoyen",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
-
-                map.on('click', 'citoyen', function (e) {
-                    
-                    function distance(lat1, lon1, lat2, lon2, unit) {
-                        var radlat1 = Math.PI * lat1/180
-                        var radlat2 = Math.PI * lat2/180
-                        var theta = lon1-lon2
-                        var radtheta = Math.PI * theta/180
-                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                        dist = Math.acos(dist)
-                        dist = dist * 180/Math.PI
-                        dist = dist * 60 * 1.1515
-                        if (unit=="K") { dist = dist * 1.609344 }
-                        if (unit=="N") { dist = dist * 0.8684 }
-                        return dist
-                    };
-                    
-                    var lat = crd.latitude
-                    var long = crd.longitude
-
-                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                    
-                    if (result < 0.07) {
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
-        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                        .addTo(map);
-        
-                    };
-                });
-            
-                map.on('mouseenter', 'citoyen', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-            
-                map.on('mouseleave', 'citoyen', function () {
-                    map.getCanvas().style.cursor = '';
-                                    });
-
-                map.loadImage('{{icone_autre.image.url}}', function(error, image) {
-                    if (error) throw error;
-                    map.addImage('icone-autre', image);
-        
-                    map.addLayer({
-                        "id": "autre",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_autre %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-autre",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
-
-                map.on('click', 'autre', function (e) {
-                    
-                function distance(lat1, lon1, lat2, lon2, unit) {
-                    var radlat1 = Math.PI * lat1/180
-                    var radlat2 = Math.PI * lat2/180
-                    var theta = lon1-lon2
-                    var radtheta = Math.PI * theta/180
-                    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                    dist = Math.acos(dist)
-                    dist = dist * 180/Math.PI
-                    dist = dist * 60 * 1.1515
-                    if (unit=="K") { dist = dist * 1.609344 }
-                    if (unit=="N") { dist = dist * 0.8684 }
-                    return dist
-                };
-                
-                var lat = crd.latitude
-                var long = crd.longitude
-
-                var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                
-                if (result < 0.07) {
-                    new mapboxgl.Popup()
-                    .setLngLat(e.features[0].geometry.coordinates)
-                    .setHTML(e.features[0].properties.description)
-                    .addTo(map);
+    {% for point in points_gamin %}
     
-                } else {
+        L.marker([{{point.y}},{{point.x}}], {icon: gamingIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+
+    {% endfor %}
+
+    {% for point in points_cuisine %}
     
-                    new mapboxgl.Popup()
-                    .setLngLat(e.features[0].geometry.coordinates)
-                    .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                    .addTo(map);
+        L.marker([{{point.y}},{{point.x}}], {icon: cuisineIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+
+    {% endfor %}
+
+    {% for point in points_elite %}
     
-                };
-            });
-        
-            map.on('mouseenter', 'autre', function () {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-        
-            map.on('mouseleave', 'autre', function () {
-                map.getCanvas().style.cursor = '';
-            });
-                
-                map.loadImage('{{icone_elite.image.url}}', function(error, image) {
-                    if (error) throw error;
-                    map.addImage('icone-elite', image);
-        
-                    map.addLayer({
-                        "id": "elite",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [
-        
-                                {% for point in points_elite %}
-        
-                                    {
-                                        "type": "Feature",
-                                        "properties": {
-                                            "description": '<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>',
-                                        },
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": [{{point.x}}, {{point.y}}]
-                                        }
-                                    },
-        
-                                {% endfor %}
-        
-                                ]
-                            }
-                        },
-                        "layout": {
-                            "icon-image": "icone-elite",
-                            "icon-size": 0.45,
-                            "icon-allow-overlap": true
-                        }
-                    });
-                });
+        L.marker([{{point.y}},{{point.x}}], {icon:eliteIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
 
-                
+    {% endfor %}
 
-                map.on('click', 'elite', function (e) {
-
-                    function distance(lat1, lon1, lat2, lon2, unit) {
-                        var radlat1 = Math.PI * lat1/180
-                        var radlat2 = Math.PI * lat2/180
-                        var theta = lon1-lon2
-                        var radtheta = Math.PI * theta/180
-                        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-                        dist = Math.acos(dist)
-                        dist = dist * 180/Math.PI
-                        dist = dist * 60 * 1.1515
-                        if (unit=="K") { dist = dist * 1.609344 }
-                        if (unit=="N") { dist = dist * 0.8684 }
-                        return dist
-                    };
-                    
-                    var lat = crd.latitude
-                    var long = crd.longitude
-
-                    var result = distance(e.features[0].geometry.coordinates[1], e.features[0].geometry.coordinates[0], lat, long, "K");
-                    
-                    if (result < 0.07) {
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-        
-                    } else {
-        
-                        new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML("Vous êtes trop loin, rapprochez vous pour acceder au défi!")
-                        .addTo(map);
-        
-                    };
-                });
-            
-                map.on('mouseenter', 'elite', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-            
-                map.on('mouseleave', 'elite', function () {
-                    map.getCanvas().style.cursor = '';
-                });
-          
-            
-            {% for user in users %}
-
-            map.loadImage('{{user.pp.image.url}}', function(error, image) {
-                if (error) throw error;
-                map.addImage('{{user.username}}', image);
-                
-                {{user.username}} = '/user_position/?id_user={{user.id}}';
-        
-                window.setInterval(function() {
-        
-                    map.getSource('{{user.id}}').setData({{user.username}});
-        
-                }, 8000);
-        
-                map.addSource('{{user.id}}', { type: 'geojson', data: {{user.username}} });
-                map.addLayer({
-                                "id": "{{user.id}}",
-                                "type": "symbol",
-                                "source": '{{user.id}}',
-                                "layout": {
-                                    "icon-image": "{{user.username}}",
-                                    "icon-size": 0.15,
-                                    "icon-allow-overlap": true
-                                }
-                            });
-        
-                map.on('click', '{{user.id}}', function (e) {
-                    new mapboxgl.Popup()
-                        .setLngLat(e.features[0].geometry.coordinates)
-                        .setHTML(e.features[0].properties.description)
-                        .addTo(map);
-                });
-        
-                // Change the cursor to a pointer when the mouse is over the places layer.
-                map.on('mouseenter', '{{user.id}}', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-        
-                // Change it back to a pointer when it leaves.
-                map.on('mouseleave', '{{user.id}}', function () {
-                    map.getCanvas().style.cursor = '';
-                });
-            });
-        
-            {% endfor %}
-            
-                map.loadImage('{{utilisateur.pp.image.url}}', function(error, image) {
-                
-                if (error) throw error;
-                map.addImage('utilisateur', image);
-        
-                utilisateur_position = '/user_position_me/?id_user={{utilisateur.id}}';
-        
-                window.setInterval(function() {
-        
-                    map.getSource('test').setData(utilisateur_position);
-        
-                }, 3000);
-        
-                map.addSource('test', { type: 'geojson', data: utilisateur_position });
-                map.addLayer({
-                                "id": "{{utilisateur.id}}",
-                                "type": "symbol",
-                                "source": "test" ,
-                                "layout": {
-                                    "icon-image": "utilisateur",
-                                    "icon-size": 0.2,
-                                    "icon-allow-overlap": true
-                                }
-                            });
-        
-                    // When a click event occurs on a feature in the places layer, open a popup at the
-                    // location of the feature, with description HTML from its properties.
-                    map.on('click', '{{user.id}}', function (e) {
-                        new mapboxgl.Popup()
-                            .setLngLat(e.features[0].geometry.coordinates)
-                            .setHTML(e.features[0].properties.description)
-                            .addTo(map);
-                    });
-
-                    // Change the cursor to a pointer when the mouse is over the places layer.
-                    map.on('mouseenter', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = 'pointer';
-                    });
-
-                    // Change it back to a pointer when it leaves.
-                    map.on('mouseleave', '{{user.id}}', function () {
-                        map.getCanvas().style.cursor = '';
-                    });
-                });  
-            }); 
-    };
-
-    map();
+    {% for point in points_autre %}
     
+        L.marker([{{point.y}},{{point.x}}], {icon: autreIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+
+    {% endfor %}
+
+    {% for point in points_citoyen %}
+    
+        L.marker([{{point.y}},{{point.x}}], {icon: citoyenIcon}).addTo(map)
+            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+
+    {% endfor %}
+    
+    map.on('popupopen', function(e) {
+
+        function distance(lat1, lon1, lat2, lon2, unit) {
+            var radlat1 = Math.PI * lat1/180
+            var radlat2 = Math.PI * lat2/180
+            var theta = lon1-lon2
+            var radtheta = Math.PI * theta/180
+            var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            dist = Math.acos(dist)
+            dist = dist * 180/Math.PI
+            dist = dist * 60 * 1.1515
+            if (unit=="K") { dist = dist * 1.609344 }
+            if (unit=="N") { dist = dist * 0.8684 }
+            return dist
+        };
+
+        var marker = e.popup._source;
+        var contenu = marker._popup._content;
+
+        var lat = position.latitude;
+        var long = position.longitude;
+
+        var result = distance(marker._latlng.lat, marker._latlng.lng, lat, long, "K");
+        if (result > 0.1) {
+            marker._popup.setContent('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
+        } else {
+            marker._popup.setContent(contenu)
+        };
+    });
+
     $('.nbre_notification').click(function () {
             $.ajax({
             url: '/compte/vue_notification/',
@@ -783,12 +216,12 @@
             $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
         });
         
-        $('div.block_notification').click(function () {
-            var id = $(this).attr('value');
-            $.ajax({
-            url: '/compte/active_notification/?notif_id='+id
-            });
+    $('div.block_notification').click(function () {
+        var id = $(this).attr('value');
+        $.ajax({
+        url: '/compte/active_notification/?notif_id='+id
         });
+    });
 </script>
 {% endblock %}
 

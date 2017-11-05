@@ -557,7 +557,7 @@ def user_map (request):
     
     users = utilisateur.amis.all().exclude(position = False)
     
-    return render(request, 'CC/user/compte/mapbis.html', locals())
+    return render(request, 'CC/user/compte/map.html', locals())
 
 
 @login_required(login_url='/connexion')
@@ -939,20 +939,20 @@ def user_classement (request):
     rang_cuisine = utilisateurs.index(utilisateur) + 1
     classements['cuisine'] = cuisine
     
-    extreme = Utilisateur.objects.all().order_by('-score_extreme')
+    extreme = Utilisateur.objects.all().order_by('-score_elite')
     utilisateurs = list(extreme)
     rang_extreme = utilisateurs.index(utilisateur) + 1
-    classements['extreme'] = extreme
+    classements['elite'] = extreme
     
-    arts = Utilisateur.objects.all().order_by('-score_arts')
+    arts = Utilisateur.objects.all().order_by('-score_gaming')
     utilisateurs = list(arts)
     rang_arts = utilisateurs.index(utilisateur) + 1
-    classements['arts'] = arts
+    classements['gaming'] = arts
     
-    social_environnement = Utilisateur.objects.all().order_by('-score_social_environnement')
+    social_environnement = Utilisateur.objects.all().order_by('-score_citoyen')
     utilisateurs = list(social_environnement)
     rang_social_environnement = utilisateurs.index(utilisateur) + 1
-    classements['social_environnement'] = social_environnement
+    classements['citoyen'] = social_environnement
     
     autre = Utilisateur.objects.all().order_by('-score_autre')
     utilisateurs = list(autre)
@@ -1506,9 +1506,6 @@ def arene_defi_signale (request):
 def arene_defi_expiration (request):
 
     maintenant = datetime.now()
-    jour_verification = timedelta (days = -7)
-    date_limite = maintenant + jour_verification
- 
     teamcc = Utilisateur.objects.get(username = "@teamcc")
     
     #Test des défis envoyé
