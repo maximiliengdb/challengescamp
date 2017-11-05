@@ -32,38 +32,24 @@
         maximumAge: 0
         };
     
+    
     function success(pos) {
         crd = pos.coords;
-        position['latitude'] = crd.latitude;
-        position['longitude'] = crd.longitude;
+        position['latitude']= crd.latitude;
+        position['longitude']= crd.longitude;
         $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
                 });
+
+        document.location.href="/compte/map";
+
         };
 
     function error(err) {
-        document.location.href="/compte/map_error";
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-        };
+    document.location.href="/compte/map_error";
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
-
-
-    function RedirectionJavascript(){
-        window.location.href="/compte/map"; 
-      };
-
-    window.setInterval(function() {
-
-        
-        if (position.latitude != 0){
-
-            RedirectionJavascript(); 
-        };
-
-    }, 2000);
-
-    
-
 
     $('.nbre_notification').click(function () {
             $.ajax({
