@@ -79,6 +79,22 @@
         strings: {
             title: "Me Localiser"
         },
+        circleStyle: {
+            color: '#E65100',
+            fillColor: '#E65100',
+            fillOpacity: 0.15,
+            weight: 2,
+            opacity: 0.3
+        },
+        /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
+        markerStyle: {
+            color: '#E65100',
+            fillColor: '#E65100',
+            fillOpacity: 0.7,
+            weight: 2,
+            opacity: 0.1,
+            radius: 0
+        },
     }).addTo(map);
 
     var LeafIcon = L.Icon.extend({
@@ -89,7 +105,10 @@
 
     var layer = new Array();
 
-    var utilisateurIcon = new LeafIcon({iconUrl: '{{utilisateur.pp.image.url}}'}); 
+    var utilisateurIcon = L.icon({
+        iconUrl: '{{utilisateur.pp.thumbnail.url}}',
+        iconSize: [60, 60], // size of the icon
+        });
    
     
     var utilisateur = L.marker([{{utilisateur.latitude}}, {{utilisateur.longitude}}], {icon: utilisateurIcon});
@@ -175,13 +194,16 @@
         };
 
         var marker = e.popup._source;
+        var contenu = marker._popup._content;
 
-        var lat = position.latitude
-        var long = position.longitude
+        var lat = position.latitude;
+        var long = position.longitude;
 
         var result = distance(marker._latlng.lat, marker._latlng.lng, lat, long, "K");
         if (result > 0.1) {
             marker._popup.setContent('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
+        } else {
+            marker._popup.setContent(contenu)
         };
     });
 
