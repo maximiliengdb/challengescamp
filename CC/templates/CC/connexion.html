@@ -131,22 +131,6 @@
                     <img class="img-responsive" style="height : 60px; margin-top: -20px;" src="{% static 'image/logo_complet.svg' %}">
                 </a>
             </div>
-            
-            <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">     
-                    <a href="#" class="dropdown-toggle btn btn-sm btn-primary" data-toggle="dropdown">
-                        Se connecter / S'inscrire
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="/inscription" class="btn btn-simple">S'inscrire</a>
-                        </li>
-                        <li>
-                            <a href="/connexion" class="btn btn-simple">Se Connecter</a>
-                        </li>
-                    </ul>
-                </li>  
-            </ul>
         </div>
     </nav>
     
@@ -165,10 +149,11 @@
                                     {% csrf_token %}
                                     <input type="text" class="form-control" name="username" id="username" placeholder="Pseudo" style="margin-top : 1%">
                                     <input type="password" class="form-control" name="password" id="password" placeholder="Mot de Passe" style="margin-top : 1%">
-
-                                    <button type="submit" class="btn btn-primary btn-block" style="margin-top : 4%">Connexion</button>
+                                    <button type="submit" class="btn btn-primary btn-block" style="margin-top : 4%; margin-bottom : 10px">Connexion</button>
                                 </form>
+                                <p><a href='/inscription' style="color : #66615b; font-size : 15px;">Pas encore inscrit?</a></p>
                             </div>
+                            
                         </div>
                         <div class="col-md-3">
 

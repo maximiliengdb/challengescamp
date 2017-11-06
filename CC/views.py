@@ -1576,11 +1576,11 @@ def arene_expiration_challengeur (request, id_defi):
 
 def email_inscription (request, utilisateur):
     
-    subject = "Challenges.Campo - Confirmation d'inscription"
+    subject = "Challenges.Camp - Confirmation d'inscription"
     to = [utilisateur.email]
     from_email = 'noreply@challengescamp.com'
 
-    image = Photo.objects.get(nom='Logo')
+    image = Photo.objects.get(nom='logo-lg')
     
     image_mail = open(image.image.path, "rb")
     msg_img = MIMEImage(image_mail.read())

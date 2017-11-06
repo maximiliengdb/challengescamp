@@ -2,4 +2,5 @@ eclipse.preferences.version=1
 encoding//CC/admin.py=utf-8
 encoding//CC/forms.py=utf-8
 encoding//CC/models.py=utf-8
+encoding//CC/script.py=utf-8
 encoding//CC/views.py=utf-8

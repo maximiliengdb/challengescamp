@@ -336,20 +336,20 @@ $("#loadactu").click(function(e){ // click event for load more
     }
 });
 $('.nbre_notification').click(function () {
-              $.ajax({
-                url: '/compte/vue_notification/',
-              });
-              $("#notifications").load("/compte/vestiaire/ #notifications");
-              $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
-          });
-          
-          $('div.block_notification').click(function () {
-              var id = $(this).attr('value');
-              $.ajax({
-                url: '/compte/active_notification/?notif_id='+id
-              });
-              alert(url);
-          });
+    $.ajax({
+    url: '/compte/vue_notification/',
+    });
+    $("#notifications").load("/compte/vestiaire/ #notifications");
+    $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
+});
+
+$('div.block_notification').click(function () {
+    var id = $(this).attr('value');
+    $.ajax({
+    url: '/compte/active_notification/?notif_id='+id
+    });
+    alert(url);
+});
 </script>
 {% endblock %}
 {% endblock %}

@@ -775,22 +775,22 @@ hr {
   right: 8px; }
 
 .form-control::-moz-placeholder {
-  color: #DDDDDD;
+  color: #66615b;
   opacity: 1;
   filter: alpha(opacity=100); }
 
 .form-control:-moz-placeholder {
-  color: #DDDDDD;
+  color: #66615b;
   opacity: 1;
   filter: alpha(opacity=100); }
 
 .form-control::-webkit-input-placeholder {
-  color: #DDDDDD;
+  color: #66615b;
   opacity: 1;
   filter: alpha(opacity=100); }
 
 .form-control:-ms-input-placeholder {
-  color: #DDDDDD;
+  color: #66615b;
   opacity: 1;
   filter: alpha(opacity=100); }
 
