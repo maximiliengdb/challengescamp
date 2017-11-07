@@ -70,10 +70,13 @@
     id = navigator.geolocation.watchPosition(success, error, options);
 
     var map = L.map('map').setView([{{utilisateur.latitude}}, {{utilisateur.longitude}}], 17);
-    
+
+    map.dragging.disable();
+
     L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
         maxZoom: 18,
         minZoom: 15,
+        dragging : false,
     }).addTo(map);
 
     var lc = L.control.locate({
@@ -127,6 +130,7 @@
         var newLatLng = new L.LatLng(lat, lng);
 
         layer["utilisateur"].setLatLng(newLatLng);
+        map.panTo(new L.LatLng(lat, lng));
 
     }, 3000);
 

@@ -49,7 +49,7 @@
                         <div class="col-md-9">
                             <div class="header">
                                 <h1 class="title">Catégories</h1>
-                                <p class="category">Cliquez sur une catégorie pour faire disparaitre ou apparaitre les sous-cataégories et défis de cette catégorie</p>
+                                <p class="category">Cliquez sur une catégorie pour faire disparaitre les défis de cette catégorie</p>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -63,16 +63,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     {% for categorie in categories %}                                  
-                                        <button type="button" class="{{categorie.nom|upper}} btn btn-lg categorie" style="border-color : {{categorie.couleur}}; border-width: 1.2px;">{{categorie}}</button>
+                                        <button type="button" class="{{categorie.nom|upper}} btn btn-lg categorie" style="border-color : {{categorie.couleur}}; border-width: 1.2px; margin-bottom : 2%;">{{categorie}}</button>
                                     {% endfor %}
-                                <hr>
                                 </div>
-                                <div class="col-md-12">
-                                <h4 class="title">Sous-Catégories</h4></br>
-                                {% for categorie in sous_categories %}
-                                    <button type="button" class="btn btn-md sous_categorie {{categorie.theme}}" style="border-color : {{categorie.theme.couleur}}; border-width: 1.2px;">{{categorie}}</button>
-                                {% endfor %}
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -105,7 +98,9 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="demo"></div>
+                                <div class="row">
+                                    <div class="demo"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -122,7 +117,7 @@
 
     $(function() {
 
-        var list = [ {% for libelle in libelles %} { nom : "{{libelle.nom}}",  id : "{{libelle.id}}", theme : "{{libelle.theme.nom}}", soustheme : "{{libelle.sous_theme.nom}}", couleur : "{{libelle.theme.couleur}}", niveau : "{{libelle.recompense.points}}"}, {% endfor %} ];
+        var list = [ {% for libelle in libelles %} { nom : "{{libelle.nom}}", description : "{{libelle.description}}",  id : "{{libelle.id}}", theme : "{{libelle.theme.nom}}", soustheme : "{{libelle.sous_theme.nom}}", couleur : "{{libelle.theme.couleur}}", niveau : "{{libelle.recompense.points}}"}, {% endfor %} ];
         
         var options = {
             shouldSort: true,
@@ -137,6 +132,7 @@
                 "soustheme",
                 "couleur",
                 "niveau",
+                "description",
             ]
             };
             
@@ -148,7 +144,7 @@
 
             for (x in result) {
                 var decoration = result[x].niveau
-                html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
+                html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,26) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
                             
             }
 
@@ -199,6 +195,7 @@
                 "soustheme",
                 "couleur",
                 "niveau",
+                "description",
             ]
             };
             
@@ -212,8 +209,9 @@
 
             for (x in result) {
                 
-                 html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> Pts : '+ result[x].niveau +'</span> <strong>'+ result[x].nom +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';          
-            }
+                html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,26) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
+                
+                }
 
             $("div.demo").html(html);
             });
