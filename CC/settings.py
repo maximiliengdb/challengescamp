@@ -121,7 +121,7 @@ STATIC_URL = '/static/'
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'C:/Users/Maximilien/OneDrive/Projet/ChallengesCamp/CC/CC/media/')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'C:/Users/Maximilien/OneDrive/Projet/ChallengesCamp/CC/CC/media/')
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'maximiliengdeb@gmail.com'
@@ -129,4 +129,4 @@ EMAIL_HOST_PASSWORD = 'maximilien060595'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-#SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
