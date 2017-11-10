@@ -19,12 +19,19 @@
 
     {% for theme in categories %}
 
-        .{{theme.nom|upper}}:hover { 
-            background-color: {{theme.couleur}};
-        } 
-       .{{theme.nom|upper}}.active { 
+        .{{theme.nom|upper}} { 
             background-color: {{theme.couleur}};
             color : white;
+        } 
+        
+        .{{theme.nom|upper}}:hover { 
+            background-color: white;
+            color : {{theme.couleur}}
+        } 
+       .{{theme.nom|upper}}.active { 
+            background-color: white;
+            color : {{theme.couleur}};
+            
         }
 
     {% endfor %}
@@ -54,14 +61,14 @@
                         </div>
                         <div class="col-md-3">
                             <div class="header">
-                            <a type"button" href="/compte/proposition_defi" class="btn btn-primary btn-block" >Proposer un défi</a>
+                            <a type"button" href="/compte/proposition_defi" class="btn btn-primary btn-block" >Prop. un défi</a>
                             </div>
                         </div>
                     </div>
                     <div class="content">
-                        <div class="container">
+                        <div class="container-fluid">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="margin-right : 20px;">
                                     {% for categorie in categories %}                                  
                                         <button type="button" class="{{categorie.nom|upper}} btn btn-lg categorie" style="border-color : {{categorie.couleur}}; border-width: 1.2px; margin-bottom : 2%;">{{categorie}}</button>
                                     {% endfor %}
@@ -74,32 +81,46 @@
 
         <div class="col-md-12">
             <div class="card">
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="header">
-                            <h3 class="title">Les Défis</h3>
-                            <p class="category">Cliquez sur un défi pour defier vos challengeurs</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="header">
-                            <form class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group">
-                                <div class="input-group-addon"><img style=" max-width : 45%" src="{% static 'image/icone/loupe.png' %}"></div>
-                                <input type="text" class="form-control search" placeholder="Rechercher un défi">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="header">
+                                    <h3 class="title">Les Défis <small>Affichage :</small>
+                                        
+                                        <!-- Nav tabs -->
+                                        <a  href="#button" aria-controls="button" role="tab" data-toggle="tab"><img style="max-height: 15px;" src="{% static 'image/icone/cube.png' %}"></a>
+                                        <a  href="#tableau" aria-controls="tableau" role="tab" data-toggle="tab"><img style="max-height: 15px;"  src="{% static 'image/icone/tab.png' %}"></a>
+                                        
+                                    </h3>
+                                    <p class="category">Cliquez sur un défi pour defier vos challengeurs</p>
                                 </div>
                             </div>
-                            </form>
+                            <div class="col-md-4">
+                                <div class="header">
+                                    <form class="form-inline">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                        <div class="input-group-addon"><img style=" max-width : 45%" src="{% static 'image/icone/loupe.png' %}"></div>
+                                        <input type="text" class="form-control search" placeholder="Rechercher un défi">
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
+                        <div class="content">
+                            <div class="container-fluid">
                                 <div class="row">
-                                    <div class="demo"></div>
+                                        <div>
+                                                
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="button"><div class="demo"></div></div>
+                                    <div role="tabpanel" class="tab-pane" id="tableau"><div class="tableau"></div></div>
+                                    </div>
+                                
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -141,14 +162,18 @@
             var x;
 
             var html = "";
+            var htmltab = '<table class="table table-hover"><thead><th>Description</th><th>Categorie</th><th>Points</th></thead> ';
 
             for (x in result) {
                 var decoration = result[x].niveau
-                html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,26) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
-                            
+                html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,25) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
+                htmltab += '<tr style = "color : '+result[x].couleur+';"><td><a href="/arene/defi_page/?id_defi='+result[x].id+'">'+result[x].description+'</a></td><td>'+result[x].theme+'</td><td>'+result[x].niveau+'</td></tr>';
             }
 
+            htmltab +='</table>';
+
             $("div.demo").html(html);
+            $("div.tableau").html(htmltab);
 
         $("button.categorie").click(function(){
             var categorie = $(this).text();
@@ -205,15 +230,22 @@
             if (search == ""){result = list};
 
             var x;
+            
             var html = "";
+            var htmltab = '<table class="table table-hover"><thead><th>Description</th><th>Categorie</th><th>Points</th></thead> ';
+                
 
             for (x in result) {
                 
-                html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,26) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
-                
+                html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,25) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
+                htmltab += '<tr style = "color : '+result[x].couleur+';"><td><a href="/arene/defi_page/?id_defi='+result[x].id+'">'+result[x].description+'</a></td><td>'+result[x].theme+'</td><td>'+result[x].niveau+'</td></tr>';
                 }
 
-            $("div.demo").html(html);
+                htmltab +='</table>';
+                
+                $("div.demo").html(html);
+                $("div.tableau").html(htmltab);
+
             });
             
     });
