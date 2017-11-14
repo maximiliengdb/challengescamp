@@ -134,15 +134,15 @@
             
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">     
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle btn btn-primary btn-block hidden-lg hidden-md" data-toggle="dropdown">
                         Se connecter
                     </a>
-                    <ul class="dropdown-menu"style="padding : 10%;">
+                    <ul class="dropdown-menu">
                     <form action="/connexion" method="post">
-                        <li>
+                        <li style="width : 100%;">
                             {% csrf_token %}
                             <input type="text" class="form-control" name="username" id="username" placeholder="Pseudo" style="margin : 2%">
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Mot de Passe" style="margin : 1%">
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Mot de Passe" style="margin : 2%">
 
                             <button type="submit" class="btn btn-primary btn-block">Connexion</button>
                         </li>
