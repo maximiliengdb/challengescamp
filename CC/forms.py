@@ -24,6 +24,11 @@ class Formulaire_Inscription(forms.ModelForm):
             'last_name' : (''),
   
             }
+        help_texts = {
+            
+            'username' : (''),
+            
+            }
         
 class Formulaire_Import_Image (forms.ModelForm):
     class Meta:

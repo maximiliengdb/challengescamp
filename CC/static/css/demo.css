@@ -13,6 +13,10 @@
     }
 }
 
+.btn{
+	white-space: wrap;
+}
+
 .icon-section {
 	margin: 0 0 3em;
 	clear: both;

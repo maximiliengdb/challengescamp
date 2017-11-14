@@ -4,18 +4,9 @@
 
 <style>
 
-    {% for theme in categories %}
-
-        .{{theme.nom}}:hover { 
-            background-color: {{theme.couleur}};
-        }
-
-        .{{theme.nom}}.active{ 
-            background-color: {{theme.couleur}};
-            color : white;
-        }
-
-    {% endfor %}
+    .btn {
+        white-space: normal ;
+    }
 
     {% for theme in categories %}
 
@@ -23,7 +14,7 @@
             background-color: {{theme.couleur}};
             color : white;
         } 
-        
+
         .{{theme.nom|upper}}:hover { 
             background-color: white;
             color : {{theme.couleur}}
@@ -89,7 +80,7 @@
                                     <h3 class="title">Les Défis <small>Affichage :</small>
                                         
                                         <!-- Nav tabs -->
-                                        <a  href="#button" aria-controls="button" role="tab" data-toggle="tab"><img style="max-height: 15px;" src="{% static 'image/icone/cube.png' %}"></a>
+                                        <a  href="#cube" aria-controls="cube" role="tab" data-toggle="tab"><img style="max-height: 15px;" src="{% static 'image/icone/cube.png' %}"></a>
                                         <a  href="#tableau" aria-controls="tableau" role="tab" data-toggle="tab"><img style="max-height: 15px;"  src="{% static 'image/icone/tab.png' %}"></a>
                                         
                                     </h3>
@@ -102,7 +93,7 @@
                                     <div class="form-group">
                                         <div class="input-group">
                                         <div class="input-group-addon"><img style=" max-width : 45%" src="{% static 'image/icone/loupe.png' %}"></div>
-                                        <input type="text" class="form-control search" placeholder="Rechercher un défi">
+                                        <input type="text" class="form-control search" placeholder="Rechercher un défi par mots clés" style="width : 100%;">
                                         </div>
                                     </div>
                                     </form>
@@ -116,8 +107,8 @@
                                                 
                                     <!-- Tab panes -->
                                     <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane active" id="button"><div class="demo"></div></div>
                                     <div role="tabpanel" class="tab-pane" id="tableau"><div class="tableau"></div></div>
+                                    <div role="tabpanel" class="tab-pane active" id="cube"><div class="cube"></div></div>
                                     </div>
                                 
                                 </div>
@@ -163,17 +154,21 @@
 
             var html = "";
             var htmltab = '<table class="table table-hover"><thead><th>Description</th><th>Categorie</th><th>Points</th></thead> ';
+            var htmlcube = "";
 
             for (x in result) {
                 var decoration = result[x].niveau
                 html += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,25) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
+                htmlcube += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button class="btn btn-primary'+ result[x].soustheme+' '+result[x].theme+'" style="word-wrap: break-word; width: 150px; height : 150px; margin : 2px; background-color : '+result[x].couleur+'; color : white; border-width : 1px;"> <span class="badge" style="float : left;"> '+ result[x].niveau +' pts</span> </br>'+ result[x].description.substring(0,50) +'...<hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
                 htmltab += '<tr style = "color : '+result[x].couleur+';"><td><a href="/arene/defi_page/?id_defi='+result[x].id+'">'+result[x].description+'</a></td><td>'+result[x].theme+'</td><td>'+result[x].niveau+'</td></tr>';
             }
 
             htmltab +='</table>';
 
             $("div.demo").html(html);
+            $("div.cube").html(htmlcube);
             $("div.tableau").html(htmltab);
+            
 
         $("button.categorie").click(function(){
             var categorie = $(this).text();
@@ -209,7 +204,7 @@
             
             var options = {
             shouldSort: true,
-            threshold: 0.4,
+            threshold: 0.2,
             location: 0,
             distance: 100,
             maxPatternLength: 32,
@@ -233,11 +228,12 @@
             
             var html = "";
             var htmltab = '<table class="table table-hover"><thead><th>Description</th><th>Categorie</th><th>Points</th></thead> ';
-                
+            var htmlcube = "";
 
             for (x in result) {
                 
                 html += '<div class="col-md-4 col-sm-6 col-xs-12"><a href="/arene/defi_page/?id_defi='+result[x].id+'"><button style=" margin : 2px; border-color : '+result[x].couleur+'; border-width: 1px;" class="btn btn-secondary btn-default '+ result[x].soustheme+' '+result[x].theme+'"> <span class="badge"> '+ result[x].niveau +' pts</span> <strong>'+ result[x].description.substring(0,25) +'</strong>  <hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a></div>';
+                htmlcube += '<a href="/arene/defi_page/?id_defi='+result[x].id+'"><button class="btn btn-primary'+ result[x].soustheme+' '+result[x].theme+'" style="word-wrap: break-word; width: 150px; height : 150px; margin : 2px; background-color : '+result[x].couleur+'; color : white; border-width : 1px;"> <span class="badge" style="float : left;"> '+ result[x].niveau +' pts</span> </br>'+ result[x].description.substring(0,50) +'...<hr style="margin-top : 0px; margin-bottom : 0px;"> <p style="text-align : right; margin-bottom : 1px;"><small>'+ result[x].theme +'</small></p></button></a>';
                 htmltab += '<tr style = "color : '+result[x].couleur+';"><td><a href="/arene/defi_page/?id_defi='+result[x].id+'">'+result[x].description+'</a></td><td>'+result[x].theme+'</td><td>'+result[x].niveau+'</td></tr>';
                 }
 
@@ -245,6 +241,7 @@
                 
                 $("div.demo").html(html);
                 $("div.tableau").html(htmltab);
+                $("div.cube").html(htmlcube);
 
             });
             

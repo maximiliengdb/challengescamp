@@ -48,6 +48,38 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Voici l'etat de vos propositions de point</h4>
+                                <hr>
+                            </div>
+                            <div class="content">
+                                
+                                <table class="table table-striped">
+                                    <thead>
+                                        <th>#</th>
+                                        <th>Titre</th>
+                                        <th>Description</th>
+                                        <th>Etat</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for defi in points %}
+                                            
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{defi.nom}}</td>
+                                                <td>{{defi.description}}</td>
+                                                <td>{{defi.get_etat_display}}</td>
+                                            </tr>
+    
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+    
+                            </div>
+                        </div>
+                    </div>
 
              </div>
             </div>

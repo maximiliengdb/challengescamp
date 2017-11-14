@@ -107,7 +107,9 @@ def home (request):
         return redirect(user_dashboard)
 
     message, type_message = message_alerte(request)
-    form = Formulaire_Inscription                   
+    form = Formulaire_Inscription
+    
+    defis = Defi.objects.all().order_by('-date_envoie')[:5]
     
     return render(request, 'CC/index.html', locals()) 
 

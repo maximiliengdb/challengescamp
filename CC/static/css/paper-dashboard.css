@@ -189,7 +189,8 @@ button:focus {
   -moz-transition: all 100ms ease-in;
   -o-transition: all 100ms ease-in;
   -ms-transition: all 100ms ease-in;
-  transition: all 100ms ease-in; }
+  transition: all 100ms ease-in;
+}
 
 .fa {
   width: 21px;
