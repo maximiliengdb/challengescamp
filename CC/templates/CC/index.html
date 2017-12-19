@@ -3,8 +3,8 @@
     {% load staticfiles %}
 <head>
 	<meta charset="utf-8" />
-	<link rel="apple-touch-icon" href="{% static 'image/icone.svg' %}">
-	<link rel="icon" type="image/svg" href="{% static 'image/icone.svg' %}">
+	<link rel="apple-touch-icon" href="{% static 'image/icone.jpeg' %}">
+	<link rel="icon" type="image/jpeg" href="{% static 'image/icone.jpeg' %}">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<title>Challenges Camp</title>
@@ -36,9 +36,9 @@
     
 </head>
 
-<body style="background-color : #f3bb45;">
+<body style="background-color : white;">
     
-    <div style="background: url({% static 'image/home/fond.png' %}) no-repeat center center fixed; 
+    <div style="background: url({% static 'image/home/fond5.png' %}) no-repeat center center fixed; 
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -86,7 +86,7 @@
             </ul>
         </div>
     </nav>
-    
+   
     <div class="main">
         <div class="section landing-section">
             <div class="container">
@@ -104,27 +104,46 @@
                     </div>
 
                     <div class="col-md-7" >
-                        <div class="jumbotron" style="background-color: transparent;">
-                            <h1 style="color : white; font-size: 56px; margin : 3%;">Etes-Vous prêt à relever le challenge <span style="text-decoration : underline;" id="test"></span>?</h1>
+                        <div style="background-color: transparent;">
+                            <h1 style="color : white; font-size: 50px; margin-top : 15%;">Etes-Vous prêt à relever le challenge <span style="text-decoration : underline;" id="test"></span>?</h1>
 
-                            <div class="row" style="text-align: center; color : white; margin-top : 8%;">
-                                <div class="col-md-6">
-                                    <h3>Defiez vos amis <h3>
-                                    <img class="img-responsive center-block" src="{% static 'image/home/Players.png' %}" style="max-width : 70%;">
-                                </div>
-                                <div class="col-md-6">
-                                    <h3>Relevez les défis à proximité</h3>
-                                    <img class="img-responsive center-block" src="{% static 'image/home/Phone.png' %}" style="max-width : 70%;">
-                                </div>
+                            <div class="row" style="text-align: center; color : white; margin-top : 8%; margin-bottom : 25%;">
+                                <iframe width="570" height="280" src="https://www.youtube.com/embed/r4hqtCW59CU?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
     </div>
     </div> 
+
+    <div class="container-fluid">
+        <div class="col-md-12" style="margin : 0; padding : 0;">
+            <div class="row">
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond2.png'%}" class="img-responsive">
+                </div>
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond2.png'%}" class="img-responsive">
+                </div>
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond3.png'%}" class="img-responsive">
+                </div>
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond4.png'%}" class="img-responsive">
+                </div>
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond3.png'%}" class="img-responsive">
+                </div>
+                <div class="col-md-2" style="margin : 0; padding : 0;">
+                    <img src="{% static 'image/home/fond.png'%}" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
 
     <footer class="footer" style="background-color : white">
         <div class="container">

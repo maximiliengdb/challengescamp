@@ -20,7 +20,7 @@
                         <form action="/recherche" method="POST" class="form-inline">
                             {% csrf_token %}
                             <div class="visible-md visible-lg">
-                                <input class="form-control mr-sm-3" id="data_grand" name="data_grand" placeholder="Rechercher des challengeurs...">
+                                <input class="form-control mr-sm-3" id="data_grand" name="data_grand" placeholder="Rechercher ...">
                                 <button class="btn btn-outline-success" style="margin-right : 5px;" type="submit"><i class="ti-search"></i></button> 
                             </div>
                             <div class="visible-xs visible-sm">
@@ -40,10 +40,18 @@
                                 {% for notification in notifications %}
                                 <li><a href="{{notification.lien}}">
                                         {% if notification.type == "D" %}
+                                            {% if notification.active == False %}
+                                            <span class="ti-bolt" style="color: #E65100;"> </span>
+                                            {% else %}
                                             <span class="ti-bolt"> </span>
+                                            {% endif %}
                                         {% endif %}
                                         {% if notification.type == "DA" %}
+                                            {% if notification.active == False %}
+                                            <span class="ti-user" style="color: #E65100;"> </span>
+                                            {% else %}
                                             <span class="ti-user"> </span>
+                                            {% endif %}
                                         {% endif %}
                                         {{notification.message}}
                                     </a>
@@ -67,7 +75,7 @@
                               <ul class="dropdown-menu">
 
                                 <li><a href="/compte/profil_prive/"><img class="img-responsives img-circle" style="max-height : 20px; margin-right : 8px; " src="{{utilisateur.pp.image.url}}" alt="..."/>Mon Profil</a></li>
-                                <li><a href="#">Mes Parametres</a></li>
+                                <li><a href="/compte/parametres">Mes Parametres</a></li>
                                 <li><a href="/deconnexion">Se deconnecter</a></li>
 
                               </ul>

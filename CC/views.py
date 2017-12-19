@@ -256,6 +256,18 @@ def user_notification_active(request, notif_id):
     return 
 
 @login_required(login_url='/connexion')
+def user_parametres (request):
+    
+    identifiant_utilisateur = request.user.id
+    utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
+    notifications, notifications_actives, notifications_new = user_notification(identifiant_utilisateur)
+    
+    nom_page = "Parametres"
+    
+    return render(request, 'CC/user/compte/parametres.html', locals())
+
+
+@login_required(login_url='/connexion')
 def user_dashboard (request):
     
     mise_a_jour(request)
@@ -463,7 +475,7 @@ def user_changement_mdp (request):
 
 
 @login_required(login_url='/connexion')
-def user_map (request):
+def user_map (request, lat, long):
     
     identifiant_utilisateur = request.user.id
     utilisateur = Utilisateur.objects.get(id=identifiant_utilisateur)
@@ -471,8 +483,14 @@ def user_map (request):
     message, type_message = message_alerte(request)
     nom_page = "La Map"
     
-    y = float(utilisateur.latitude)
-    x = float(utilisateur.longitude)
+    test = request.GET.get('lat', "erreur")
+    
+    latitude = request.GET['lat']
+    longitude = request.GET['long']
+
+    y = float(latitude)
+    x = float(longitude)
+    
     
     xmoins = x - 0.09
     ymoins = y - 0.07
@@ -808,7 +826,7 @@ def user_profil_prive (request):
     nb_defis_releves = len(Defi.objects.filter(challengeur = utilisateur, etat = "V"))
     nb_defis_lances = len(Defi.objects.filter(defieur = utilisateur))
     actus = Actualite.objects.filter(personne_concernee = utilisateur).order_by('-date')[:25]
-    nbr_defis_proposes = len(Proposition_Defi.objects.filter(auteur = utilisateur))
+    nb_defis_proposes = len(Proposition_Defi.objects.filter(auteur = utilisateur))
 
     if user_profil.pp :
         pp = user_profil.pp
@@ -839,6 +857,7 @@ def user_profil_public (request, profil):
     
     nb_defis_releves = len(Defi.objects.filter(challengeur = user_profil, etat = "V"))
     nb_defis_lances = len(Defi.objects.filter(defieur = user_profil))
+    nb_defis_proposes = len(Proposition_Defi.objects.filter(auteur = user_profil))
     demande = False
     
     try :
@@ -909,7 +928,7 @@ def user_proposition_etat (request):
     defis = Proposition_Defi.objects.filter(auteur = utilisateur)
     points = Proposition_Point.objects.filter(auteur = utilisateur)
 
-    return render(request, 'CC/user/compte/proposition_etat.html', locals())
+    return render(request, 'CC/user/compte/propositions_etat.html', locals())
 
 
 @login_required(login_url='/connexion')
@@ -1600,3 +1619,13 @@ def email_inscription (request, utilisateur):
     
     
     return 
+
+def eclair_refill (request):
+    
+    utilisateurs = Utilisateur.objects.all()
+    
+    for utilisateur in utilisateurs :
+        utilisateur.eclairs = utilisateur.eclairs + 1
+        utilisateur.save()
+        
+    return

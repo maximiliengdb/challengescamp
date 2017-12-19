@@ -5,6 +5,30 @@
 {% include "CC/naviguation.html" %}
 
 <style>
+
+.card-user .image {
+    border-radius: 8px 8px 0 0;
+    height: 150px;
+    position: relative;
+    overflow: hidden; }
+    .card-user .image img {
+        width: 100%; }
+    .card-user .image-plain {
+    height: 0;
+    margin-top: 110px; }
+    .card-user .author {
+    text-align: center;
+    text-transform: none;
+    margin-top: -95px; }
+    .card-user .author .title {
+        color: #403D39; }
+        .card-user .author .title small {
+        color: #ccc5b9; }
+
+.card-user .avatar {
+    width: 150px;
+    height: 150px;
+}
 .container {
   position: relative;
   width: 50%;
@@ -75,13 +99,13 @@
                         </div>
                     {% endif %}
                     
-                    <div class="col-lg-4 col-md-5">
+                    <div class="col-lg-12 col-md-12">
                         <div class="card card-user">
                             <div class="image">
                                 {% if type == "moi" %}
                                 <a href="/compte/parametre/changement_pa">
                                 <div class="container2">
-                                  <img src="{{user_profil.pa.image.url}}" alt="..."/>
+                                  <img src="{{user_profil.pa.image.url}}" alt="Photo de Couverture"/>
                                 
                                   <div class="overlay2">
                                     <div class="text2"><p>Modifier ma photo d'accueil</p></div>
@@ -111,10 +135,34 @@
                                 <img class="avatar border-white" src="{{user_profil.pp.image.url}}" alt="{{user_profil.username}}">
                                 {% endif %}
 
-                                  <h4 class="title">{{user_profil.first_name|title }} {{user_profil.last_name|title }}<br />
-                                     <a href="#"><small>@{{user_profil.username|title }}</small></a>
-                                  </h4>
+                                  <h4 class="title">{{user_profil.first_name|title }} {{user_profil.last_name|title }} <small>@{{user_profil.username|title }}</small></h4>
                                 </div>
+                                <div class="text-center">
+                                </br>
+                                    <hr>
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <h5>{{nb_defis_releves}}<br/><small>Défis relevés</small></h5>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <h5>{{nb_defis_lances}}<br/><small>Défis lancés</small></h5>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <h5>{{rang_absolu}}<br/><small>Rang absolu</small></h5>
+                                            </div>
+                                            {% if type == "moi" %}
+                                            <a href="/compte/propositions_etat">
+                                            <div class="col-xs-3">
+                                                <h5>{{nb_defis_proposes}}<br/><small>Dédis proposés</small></h5>
+                                            </div>
+                                            </a>
+                                            {% else %}
+                                            <div class="col-xs-3">
+                                                <h5>{{nb_defis_proposes}}<br/><small>Dédis proposés</small></h5>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 <p class="description text-center">
                                     {{user_profil.description}}
                                     
@@ -139,188 +187,160 @@
                                 </p>
                             </div>
                             <hr>
-                            <div class="text-center">
-                                <div class="row">
-                                    <div class="col-xs-3 col-xs-offset-1">
-                                        <h5>{{nb_defis_releves}}<br /><small>Nb Défis Relevés</small></h5>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h5>{{nb_defis_releves}}<br /><small>Nb Défis lancés</small></h5>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <h5>{{rang_absolu}}<br /><small>Rang Absolu</small></h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="header" style="background-color : white;">
-                                {% if type == "moi" %}
-                                <h4 class="title">Mes statistiques</h4>
-                                <p class="category">Je suis actuellement {{rang_absolu}}ème toutes catégories confondues avec {{user_profil.score_absolu}}pts </p>
                             
-                                {% else %}
-                                <h4 class="title">Ses statistiques</h4>
-                                <p class="category">{{user_profil.username|title}} est actuellement {{rang_absolu}}ème toutes catégories confondues avec {{user_profil.score_absolu}}pts </p>
-                            
-                                {% endif %}
-                            </div>
-                            <div class="content">
-                                
-                                <!-- Chart code -->
-                                <script>
-                                var chart = AmCharts.makeChart( "chartdiv", {
-                                "type": "radar",
-                                "theme": "none",
-                                "dataProvider": [ {
-                                    "categorie": "Sport",
-                                    "defis": {{user_profil.score_sport}}
-                                }, {
-                                    "categorie": "Cuisine",
-                                    "defis": {{user_profil.score_cuisine}}
-                                }, {
-                                    "categorie": "Creation",
-                                    "defis": {{user_profil.score_creation}}
-                                }, {
-                                    "categorie": "Social/Environnement",
-                                    "defis": {{user_profil.score_citoyen}}
-                                }, {
-                                    "categorie": "Extrême",
-                                    "defis": {{user_profil.score_elite}}
-                                }, {
-                                    "categorie": "Autre",
-                                    "defis": {{user_profil.score_autre}}
-                                },{
-                                    "categorie": "Gaming",
-                                    "defis": {{user_profil.score_gaming}}
-                                }  ],
-                                "valueAxes": [ {
-                                    "axisTitleOffset": 20,
-                                    "minimum": 0,
-                                    "axisAlpha": 0.15
-                                } ],
-                                "startDuration": 1,
-                                "graphs": [ {
-                                    "balloonText": "[[value]] pts",
-                                    "bullet": "round",
-                                    "lineThickness": 2,
-                                    "valueField": "defis"
-                                } ],
-                                "categoryField": "categorie",
-                                "export": {
-                                    "enabled": true
-                                }
-                                } );
-                                </script>
-                                <div class="row">
-
-                                    <div class="col-md-12">
-                                        <div id="chartdiv" style="width: 100%; height: 400px;"></div>
-                                    </div>
-
-                                </div>
-                                <div class="footer">
-                                    <hr>
-                                    <div class="stats">
-                                        <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        {% if type == "moi" %}
-
-                        <div class="card">
-                            <div class="header" style="background-color : white;">
-                                <h4 class="title">
-                                    Nombre de défis proposés :<strong> {{nbr_defis_proposes}}</strong>
-                                    </br><small><a href="/compte/proposition_defi_etat">Voir l'état d'avancement</small>
-                                </h4>
-                            </div>
-                            <div class="content">
-                            </div>
-                        </div>
-
-                        {% endif %}
                     </div>
+                </div>
 
                     
-
-                    <div class="col-lg-8 col-md-7">
-
-                        {% if type == "moi" %}
-
-                        <div class="row" style="text-align: center;">
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <a href="/compte/parametre/changement_mdp">
-                                    <div class="content">
-                                        <h5>Changer de mot de passe</h5>
-                                    </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="content">
-                                        <h5>Changer d'adresse mail</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="content">
-                                        <h5><i class="ti-settings"> </i>Paramètres</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {% endif %}
-
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">L'actualité</h4>
-                                <p class="category">de ces 7 derniers jours</p>
-                            </div>
-                            <div class="content">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="header" style="background-color : white;">
+                                    {% if type == "moi" %}
+                                    <h4 class="title">Mes statistiques</h4>
+                                    <p class="category">Je suis actuellement {{rang_absolu}}ème toutes catégories confondues avec {{user_profil.score_absolu}}pts </p>
                                 
-                                {% for act in actus %}
-                                <div class="actu" style="display:none;">
-                                    <div class="card">
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <img class="image-responsive" src="{{act.personne_concernee.pp.image.url}}" alt="..." style="max-height : 100px; margin : 6px;"/>
-                                            </div>
-                                            <div class="col-md-10">
-                                                <div class="header">
-                                                    <h4 class="title">{{act.personne_concernee}}</h4>
-                                                    <p class="category">{{act.date}}</p>
+                                    {% else %}
+                                    <h4 class="title">Ses statistiques</h4>
+                                    <p class="category">{{user_profil.username|title}} est actuellement {{rang_absolu}}ème toutes catégories confondues avec {{user_profil.score_absolu}}pts </p>
+                                
+                                    {% endif %}
+                                </div>
+                                <div class="content">
+                                    
+                                    <!-- Chart code -->
+                                    <script>
+                                    var chart = AmCharts.makeChart( "chartdiv", {
+                                    "type": "radar",
+                                    "theme": "none",
+                                    "dataProvider": [ {
+                                        "categorie": "Sport",
+                                        "defis": {{user_profil.score_sport}}
+                                    }, {
+                                        "categorie": "Cuisine",
+                                        "defis": {{user_profil.score_cuisine}}
+                                    }, {
+                                        "categorie": "Creation",
+                                        "defis": {{user_profil.score_creation}}
+                                    }, {
+                                        "categorie": "Social/Environnement",
+                                        "defis": {{user_profil.score_citoyen}}
+                                    }, {
+                                        "categorie": "Extrême",
+                                        "defis": {{user_profil.score_elite}}
+                                    }, {
+                                        "categorie": "Autre",
+                                        "defis": {{user_profil.score_autre}}
+                                    },{
+                                        "categorie": "Gaming",
+                                        "defis": {{user_profil.score_gaming}}
+                                    }  ],
+                                    "valueAxes": [ {
+                                        "axisTitleOffset": 20,
+                                        "minimum": 0,
+                                        "axisAlpha": 0.15
+                                    } ],
+                                    "startDuration": 1,
+                                    "graphs": [ {
+                                        "balloonText": "[[value]] pts",
+                                        "bullet": "round",
+                                        "lineThickness": 2,
+                                        "valueField": "defis"
+                                    } ],
+                                    "categoryField": "categorie",
+                                    "export": {
+                                        "enabled": true
+                                    }
+                                    } );
+                                    </script>
+                                    <div class="row">
+    
+                                        <div class="col-md-12">
+                                            <div id="chartdiv" style="width: 100%; height: 400px;"></div>
+                                        </div>
+    
+                                    </div>
+                                    <div class="footer">
+                                        <hr>
+                                        <div class="stats">
+                                            <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {% if type == "moi" %}
+                            <div class="card">
+                                <div class="header" style="background-color : white;">
+                                    <h5 class="title">
+                                        <i class="ti-timer"> </i>  <a href="/compte/mes_defis"> Historique de mes Défis</a>
+                                    </h5>
+                                </div>
+                                <div class="content">
+                                </div>
+                            </div>
+                            <div class="card">
+                                    <div class="header" style="background-color : white;">
+                                        <h5 class="title">
+                                            <i class="ti-reload"> </i>  <a href="/arene/defi_moderation"> Modérer des défis</a>
+                                        </h5>
+                                    </div>
+                                    <div class="content">
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-8 ">
+                            <div class="card">
+                                <div class="header">
+                                    <h4 class="title">L'actualité</h4>
+                                    <p class="category">de ces 7 derniers jours</p>
+                                </div>
+                                <div class="content">
+                                    
+                                    {% for act in actus %}
+                                    <div class="actu" style="display:none;">
+                                        <div class="card">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <img class="image-responsive" src="{{act.personne_concernee.pp.image.url}}" alt="Photo de profil" style="max-height : 100px; margin : 6px;"/>
                                                 </div>
-                                                <div class="content">
-                                                    <div class="row">
-                                                        <div class="col-md-12">                                               
-                                                            
-                                                            <p>{{act.message}}</p>                                                              
-                                                    
+                                                <div class="col-md-10">
+                                                    <div class="header">
+                                                        <h4 class="title">{{act.personne_concernee}}</h4>
+                                                        <p class="category">{{act.date}}</p>
+                                                    </div>
+                                                    <div class="content">
+                                                        <div class="row">
+                                                            <div class="col-md-12">                                               
+                                                                
+                                                                <p>{{act.message}}</p>                                                              
+                                                        
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                {% endfor %}
-                                <div class="footer">
-                                    <a class="btn btn-default btn-block" href="#" id="loadactu">Voir plus d'actualité</a>
-                                    <hr>
-                                    <div class="stats">
-                                        <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
+                                    {% endfor %}
+                                    <div class="footer">
+                                        <a class="btn btn-default btn-block" href="#" id="loadactu">Voir plus d'actualité</a>
+                                        <hr>
+                                        <div class="stats">
+                                            <i class="ti-reload"></i> Mise à jour : <script>document.write(new Date())</script>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
-                    
+                
                 </div>
             </div>
         </div>

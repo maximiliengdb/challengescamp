@@ -14,47 +14,39 @@
                 </div>
             {% endif %}
 
-            <img src="{% static 'image/Spinner.svg'%}" class= "image responsive center-block" />
+            <div class="row">
+                <div class="col-md-12">
 
-            <h2 style="text-align : center;">UNE PHRASE PHILOSOPHIQUE A METTRE</h2>
-            <h1 style="text-align : center;">PUBLICITE A METTRE</h1>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <a href="/compte/parametre/changement_mdp">
+                            <div class="content">
+                                <h5>Changer de mot de passe</h5>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="content">
+                                <h5>Changer d'adresse mail</h5>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
              </div>
+            </div>
         </div>
 
 
 {% block javascript %}
 <script>
-
-
-    position = {};
-    
-    var options = {
-        enableHighAccuracy: true,
-        timeout: 1000,
-        maximumAge: 0
-        };
-    
-    
-    function success(pos) {
-        crd = pos.coords;
-        setTimeout(function(){ document.location.href="/compte/map?lat="+crd.latitude+"&long="+crd.longitude; }, 5000);
-
-        };
-
-    function error(err) {
-    document.location.href="/compte/map_error";
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-    };
-
-    navigator.geolocation.getCurrentPosition(success, error, options);
-
     $('.nbre_notification').click(function () {
             $.ajax({
             url: '/compte/vue_notification/',
             });
             $("#notifications").load("/compte/vestiaire/ #notifications");
-            $("#notificationspetit").load("/compte/vestiaire/ #notificationspetit");
         });
         
         $('div.block_notification').click(function () {

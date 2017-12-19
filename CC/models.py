@@ -83,7 +83,7 @@ class Notification(models.Model):
     
     date = models.DateTimeField(auto_now=False, default = now) 
     
-    active = models.BooleanField(default = True)
+    active = models.BooleanField(default = False)
     vue = models.BooleanField(default = False)
     
     def __str__(self):

@@ -26,13 +26,13 @@
                             </div>
                             <div class="content">
                                 <div class="author">
-                                  <img class="avatar border-white"  src="{{ami.pp.image.url}}" alt="Photo de profil de {{ami.username}}"/>
-                                  <a href="/compte/profil_public/?profil={{ami.id}}"><h4 class="title">{{ami.first_name|title }} {{ami.last_name|title }}<br />
+                                    <a href="/compte/profil_public/?profil={{ami.id}}"><img class="avatar border-white"  src="{{ami.pp.image.url}}" alt="Photo de profil de {{ami.username}}"/>
+                                    <h4 class="title">{{ami.first_name|title }} {{ami.last_name|title }}<br />
                                      <small>@{{ami.username}}</small></a>
                                   </h4>
                                 </div>
                                 <p class="description text-center">
-                                    {{ami.info}}
+                                    <a class="btn btn-primary" href="/arene/defi_user_cible/?id_user={{ami.id}}">Défier</a>
                                 </p>
                             </div>
                         </div>

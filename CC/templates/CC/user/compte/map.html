@@ -45,174 +45,181 @@
 {% block javascript %}
 <script>
 
+    var erreur = "erreur"
+
+    if ({{test}} == erreur) {
+        setTimeout(function(){ document.location.href="/compte/map_preload/"; }, 100);
+    };
+
     position = {};
-
-    var options = {
-        enableHighAccuracy: true,
-        timeout: 1000,
-        maximumAge: 0
-        };
     
-   
-    function success(pos) {
-        crd = pos.coords;
-        position['latitude']= crd.latitude;
-        position['longitude']= crd.longitude;
-        $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
-                });
-        };
-
-
-    function error(err) {
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-        };
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 1000,
+            maximumAge: 0
+            };
         
-    id = navigator.geolocation.watchPosition(success, error, options);
-
-    var map = L.map('map').setView([{{utilisateur.latitude}}, {{utilisateur.longitude}}], 17);
-
-    map.dragging.disable();
-
-    L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        minZoom: 15,
-        dragging : false,
-    }).addTo(map);
-
-    var lc = L.control.locate({
-        flyTo : 'True',
-        strings: {
-            title: "Me Localiser"
-        },
-        circleStyle: {
-            color: '#E65100',
-            fillColor: '#E65100',
-            fillOpacity: 0.15,
-            weight: 2,
-            opacity: 0.3
-        },
-        /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
-        markerStyle: {
-            color: '#E65100',
-            fillColor: '#E65100',
-            fillOpacity: 0.7,
-            weight: 2,
-            opacity: 0.1,
-            radius: 0
-        },
-
-    }).addTo(map);
-
-    var LeafIcon = L.Icon.extend({
-        options: {
-            iconSize: [34, 53],
-        }
-    });
-
-    var layer = new Array();
-
-    var utilisateurIcon = L.icon({
-        iconUrl: '{{utilisateur.pp.thumbnail.url}}',
-        iconSize: [60, 60], // size of the icon
+       
+        function success(pos) {
+            crd = pos.coords;
+            position['latitude']= crd.latitude;
+            position['longitude']= crd.longitude;
+            $.ajax({url: '/user_position_push/?id_user={{utilisateur.id}}&latitude='+crd.latitude+'&longitude='+crd.longitude,
+                    });
+            };
+    
+    
+        function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+            };
+            
+        id = navigator.geolocation.watchPosition(success, error, options);
+    
+        var map = L.map('map').setView([{{latitude}}, {{longitude}}], 17);
+    
+        map.dragging.disable();
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            minZoom: 15,
+            dragging : false,
+        }).addTo(map);
+    
+        var lc = L.control.locate({
+            flyTo : 'True',
+            strings: {
+                title: "Me Localiser"
+            },
+            circleStyle: {
+                color: '#E65100',
+                fillColor: '#E65100',
+                fillOpacity: 0.15,
+                weight: 2,
+                opacity: 0.3
+            },
+            /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
+            markerStyle: {
+                color: '#E65100',
+                fillColor: '#E65100',
+                fillOpacity: 0.7,
+                weight: 2,
+                opacity: 0.1,
+                radius: 0
+            },
+    
+        }).addTo(map);
+    
+        var LeafIcon = L.Icon.extend({
+            options: {
+                iconSize: [34, 53],
+            }
         });
-   
     
-    var utilisateur = L.marker([{{utilisateur.latitude}}, {{utilisateur.longitude}}], {icon: utilisateurIcon});
-
-    map.addLayer(utilisateur);
-    layer["utilisateur"] = utilisateur;
+        var layer = new Array();
     
+        var utilisateurIcon = L.icon({
+            iconUrl: '{{utilisateur.pp.thumbnail.url}}',
+            iconSize: [60, 60], // size of the icon
+            });
+       
         
-    window.setInterval(function() {
+        var utilisateur = L.marker([{{latitude}}, {{longitude}}], {icon: utilisateurIcon});
+    
+        map.addLayer(utilisateur);
+        layer["utilisateur"] = utilisateur;
         
-        var lat = position.latitude;
-        var lng = position.longitude;
-        var newLatLng = new L.LatLng(lat, lng);
-
-        layer["utilisateur"].setLatLng(newLatLng);
-        map.panTo(new L.LatLng(lat, lng));
-
-    }, 3000);
-
-    var sportIcon = new LeafIcon({iconUrl: '{{icone_sport.image.url}}'}); 
-    var gamingIcon = new LeafIcon({iconUrl: '{{icone_gaming.image.url}}'}); 
-    var cuisineIcon = new LeafIcon({iconUrl: '{{icone_cuisine.image.url}}'}); 
-    var eliteIcon = new LeafIcon({iconUrl: '{{icone_elite.image.url}}'}); 
-    var autreIcon = new LeafIcon({iconUrl: '{{icone_autre.image.url}}'}); 
-    var citoyenIcon = new LeafIcon({iconUrl: '{{icone_citoyen.image.url}}'}); 
-
-
-    {% for point in points_sport %}
+            
+        window.setInterval(function() {
+            
+            var lat = position.latitude;
+            var lng = position.longitude;
+            var newLatLng = new L.LatLng(lat, lng);
     
-        L.marker([{{point.y}},{{point.x}}], {icon: sportIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
+            layer["utilisateur"].setLatLng(newLatLng);
+            map.panTo(new L.LatLng(lat, lng));
     
-    {% for point in points_gamin %}
+        }, 2000);
     
-        L.marker([{{point.y}},{{point.x}}], {icon: gamingIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
-
-    {% for point in points_cuisine %}
+        var sportIcon = new LeafIcon({iconUrl: '{{icone_sport.image.url}}'}); 
+        var gamingIcon = new LeafIcon({iconUrl: '{{icone_gaming.image.url}}'}); 
+        var cuisineIcon = new LeafIcon({iconUrl: '{{icone_cuisine.image.url}}'}); 
+        var eliteIcon = new LeafIcon({iconUrl: '{{icone_elite.image.url}}'}); 
+        var autreIcon = new LeafIcon({iconUrl: '{{icone_autre.image.url}}'}); 
+        var citoyenIcon = new LeafIcon({iconUrl: '{{icone_citoyen.image.url}}'}); 
     
-        L.marker([{{point.y}},{{point.x}}], {icon: cuisineIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
-
-    {% for point in points_elite %}
     
-        L.marker([{{point.y}},{{point.x}}], {icon:eliteIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
-
-    {% for point in points_autre %}
+        {% for point in points_sport %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon: sportIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
     
-        L.marker([{{point.y}},{{point.x}}], {icon: autreIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
-
-    {% for point in points_citoyen %}
+        {% endfor %}
+        
+        {% for point in points_gamin %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon: gamingIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
     
-        L.marker([{{point.y}},{{point.x}}], {icon: citoyenIcon}).addTo(map)
-            .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
-
-    {% endfor %}
+        {% endfor %}
     
-    map.on('popupopen', function(e) {
-
-        function distance(lat1, lon1, lat2, lon2, unit) {
-            var radlat1 = Math.PI * lat1/180
-            var radlat2 = Math.PI * lat2/180
-            var theta = lon1-lon2
-            var radtheta = Math.PI * theta/180
-            var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-            dist = Math.acos(dist)
-            dist = dist * 180/Math.PI
-            dist = dist * 60 * 1.1515
-            if (unit=="K") { dist = dist * 1.609344 }
-            if (unit=="N") { dist = dist * 0.8684 }
-            return dist
-        };
-
-        var marker = e.popup._source;
-        var contenu = marker._popup._content;
-
-        var lat = position.latitude;
-        var long = position.longitude;
-
-        var result = distance(marker._latlng.lat, marker._latlng.lng, lat, long, "K");
-        if (result > 0.1) {
-            marker._popup.setContent('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
-        } else {
-            marker._popup.setContent(contenu)
-        };
-    });
+        {% for point in points_cuisine %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon: cuisineIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+    
+        {% endfor %}
+    
+        {% for point in points_elite %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon:eliteIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+    
+        {% endfor %}
+    
+        {% for point in points_autre %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon: autreIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+    
+        {% endfor %}
+    
+        {% for point in points_citoyen %}
+        
+            L.marker([{{point.y}},{{point.x}}], {icon: citoyenIcon}).addTo(map)
+                .bindPopup('<p> Votre défi : <small> {{point.defi.description}} </br> </small> <a style="maring-top: 2%" type=button class="btn btn-secondary btn-xs" href="/compte/map/defi/?id_defi={{point.defi.id}}" >ACCEPTER</a></p>')
+    
+        {% endfor %}
+        
+        map.on('popupopen', function(e) {
+    
+            function distance(lat1, lon1, lat2, lon2, unit) {
+                var radlat1 = Math.PI * lat1/180
+                var radlat2 = Math.PI * lat2/180
+                var theta = lon1-lon2
+                var radtheta = Math.PI * theta/180
+                var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                dist = Math.acos(dist)
+                dist = dist * 180/Math.PI
+                dist = dist * 60 * 1.1515
+                if (unit=="K") { dist = dist * 1.609344 }
+                if (unit=="N") { dist = dist * 0.8684 }
+                return dist
+            };
+    
+            var marker = e.popup._source;
+            var contenu = marker._popup._content;
+    
+            var lat = position.latitude;
+            console.log (position)
+            var long = position.longitude;
+    
+            var result = distance(marker._latlng.lat, marker._latlng.lng, lat, long, "K");
+            if (result > 0.1) {
+                marker._popup.setContent('Vous êtes trop loin, rapprochez vous pour acceder au défi!')
+            } else {
+                marker._popup.setContent(contenu)
+            };
+        });
 
     $('.nbre_notification').click(function () {
             $.ajax({

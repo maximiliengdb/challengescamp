@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views 
+from . import script 
 
 
 admin.site.site_header = "Challenges.Camp Administration" 
@@ -21,7 +22,7 @@ urlpatterns = [
     url(r'^compte/parametre/changement_pa' , views.user_changement_pa, name='Changement PA'),
     url(r'^compte/parametre/changement_mdp', views.user_changement_mdp, name='Profil Settings Page'),
     
-    url(r'^compte/map/$', views.user_map, name='Map'),
+    url(r'^compte/map/(?P<lat>)(?P<long>)$', views.user_map, name='Map'),
     url(r'^compte/map_preload/$', views.user_map_preload, name='Map'),
     url(r'^compte/map_tri/', views.user_map_tri, name='Map'),
     url(r'^compte/map_error/$', views.user_map_error, name='Map'),
@@ -37,9 +38,10 @@ urlpatterns = [
     url(r'^compte/mes_defis', views.user_defis, name='Defis Page'),
     url(r'^compte/proposition_defi$', views.user_proposition_defi, name='Proposition Defi'),
     url(r'^compte/proposition_point$', views.user_map_proposition_point, name='Proposition Point'),
-    url(r'^compte/propositions$', views.user_proposition_etat, name='Propositions Etat'),
+    url(r'^compte/propositions_etat$', views.user_proposition_etat, name='Propositions Etat'),
     url(r'^compte/demande_ami/page', views.user_demande_ami_page, name='Demande Ami'),
     url(r'^compte/classements', views.user_classement, name='Classement'),
+    url(r'^compte/parametres', views.user_parametres, name='Parametres'),
     
     url(r'^compte/notification/', views.user_notification, name='Notification'),
     url(r'^compte/notification_page/', views.user_notification_page, name='Notification'),
